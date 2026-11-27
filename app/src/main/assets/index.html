@@ -1,0 +1,1517 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B2B52">
+<title>묵주기도</title>
+<style>
+:root{--b-up-mini:rgba(255,255,255,.22);--b-up:#E9E1CC;--b-up-big:#E9D6A1;--b-done:#D8B45C;--b-thread:rgba(216,180,92,.35);--b-cur:#FFFFFF;--b-glow:242,210,122;--b-cross:#E9D6A1;--b-sheen:none;--navy:#1B2B52;--gold:#D8B45C;--gold-l:#E9D6A1;--ivory:#F7F3EA;--ink:#2B2618;--muted:#C9D2E6;--brown:#4A3B1F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--navy)}
+body{font-family:'Noto Sans KR','Noto Sans CJK KR','Apple SD Gothic Neo',system-ui,sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none}
+@font-face{font-family:'RosarySerif';src:url('fonts/rosary-serif-kr.woff') format('woff');font-weight:500 900;font-display:swap}
+.serif{font-family:'RosarySerif','Noto Serif KR','Noto Serif CJK KR',serif}
+button{font-family:inherit;cursor:pointer}
+.app{max-width:480px;margin:0 auto;height:100vh;height:100dvh;position:relative;overflow:hidden;background:var(--ivory)}
+.screen{position:absolute;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+/* splash */
+#splash{background:var(--navy);color:var(--ivory);align-items:center;padding:max(80px,12vh) 32px 40px}
+#splash h1{margin:40px 0 0;font-size:40px;font-weight:700;letter-spacing:.04em}
+#splash .sub{margin:12px 0 0;font-size:16px;line-height:1.6;color:var(--muted);text-align:center}
+#splash .grow{flex:1}
+#splash .today{margin:0 0 18px;font-size:14px;color:var(--gold-l);text-align:center}
+.btn-gold{width:100%;height:56px;border:none;border-radius:28px;background:var(--gold);color:var(--navy);font-size:17px;font-weight:700}
+.btn-line{width:100%;height:52px;margin-top:12px;border:1.5px solid rgba(255,255,255,.35);border-radius:26px;background:transparent;color:var(--ivory);font-size:15px;font-weight:500}
+/* pray header */
+.head{background:var(--navy);color:var(--ivory);padding:6px 20px 18px;display:flex;flex-direction:column;gap:14px;border-radius:0 0 24px 24px;flex:0 0 auto}
+.bar{display:flex;align-items:center;justify-content:space-between;height:48px}
+.icon-btn{width:44px;height:44px;border:none;background:transparent;color:var(--ivory);display:flex;align-items:center;justify-content:center;padding:0}
+.bar h1{margin:0;font-size:20px;font-weight:700}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:rgba(255,255,255,.07);border-radius:26px;padding:4px}
+.tabs button{height:40px;border:none;border-radius:22px;background:transparent;color:var(--muted);font-size:15px;font-weight:500}
+.tabs button[aria-pressed="true"]{background:var(--gold);color:var(--navy);font-weight:700}
+.row{display:flex;gap:16px}
+.ring{position:relative;flex:0 0 128px;width:128px;height:186px}
+.ring .loop{position:absolute;left:12px;top:6px;width:104px;height:104px;border-radius:52px;border:1px solid var(--b-thread)}
+.ring .chain{position:absolute;left:63.5px;top:112px;width:1px;height:56px;background:var(--b-thread)}
+.bead{position:absolute;border-radius:50%;background-color:var(--b-up-mini);transition:all .2s}
+.bead.done{background-color:var(--b-done);background-image:var(--b-sheen)}
+.bead.cur{background-color:var(--b-cur);border:2px solid rgb(var(--b-glow));box-shadow:0 0 0 3px rgba(var(--b-glow),.35),0 0 12px rgba(var(--b-glow),.9)}
+.bead.cur.pop{animation:beadPop .7s ease-out}
+@keyframes beadPop{0%{box-shadow:0 0 0 3px rgba(var(--b-glow),.35),0 0 0 rgba(var(--b-glow),0)}35%{box-shadow:0 0 0 7px rgba(var(--b-glow),.45),0 0 22px rgba(var(--b-glow),1)}100%{box-shadow:0 0 0 3px rgba(var(--b-glow),.35),0 0 12px rgba(var(--b-glow),.9)}}
+.ring svg{position:absolute;left:56px;top:166px;overflow:visible}
+.ring svg path{fill:var(--b-up-mini);transition:fill .2s}
+.ring svg.done path{fill:var(--b-done)}
+.ring svg.cur path{fill:var(--b-cur)}
+.ring svg.cur{filter:drop-shadow(0 0 5px rgba(var(--b-glow),.95))}
+.info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.info .set{margin:0;font-size:13px;font-weight:500;color:var(--gold-l)}
+.info .phase{margin:0;font-size:20px;font-weight:700;line-height:1.4}
+.prog{height:6px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden}
+.prog i{display:block;height:6px;background:var(--gold);border-radius:3px;transition:width .2s}
+.info .ptext{margin:6px 0 0;font-size:12px;color:var(--muted)}
+.dots{display:flex;align-items:center;gap:6px;min-height:14px}
+.dots span{width:9px;height:9px;border-radius:5px;border:1.5px solid rgba(255,255,255,.4)}
+.dots span.done{background:var(--b-done);border-color:var(--b-done)}
+.dots span.cur{width:12px;height:12px;border-radius:6px;background:var(--b-cur);border:3px solid rgb(var(--b-glow))}
+.chip{align-self:flex-start;font-size:12px;font-weight:500;color:var(--navy);background:var(--gold-l);border-radius:10px;padding:3px 10px}
+/* card */
+.body{flex:1 1 auto;min-height:0;padding:18px 20px 14px;display:flex;flex-direction:column}
+.card{flex:1 1 auto;min-height:0;background:#fff;border:1px solid #E4DCC8;border-radius:20px;padding:22px 24px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.card h2{margin:0;font-size:22px;font-weight:700;color:var(--navy)}
+.count{font-size:15px;font-weight:700;color:#7A5E22;white-space:nowrap}
+.ptxt{margin:0;line-height:1.85;white-space:pre-line;color:var(--ink);-webkit-user-select:text;user-select:text}
+.donecard{flex:1;background:#fff;border:1px solid #E4DCC8;border-radius:20px;padding:32px 24px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.donecard h2{margin:0;font-size:24px;color:var(--navy)}
+.donecard p{margin:0;font-size:15px;line-height:1.7;color:var(--brown)}
+.btn-outline{margin-top:12px;height:52px;padding:0 28px;border-radius:26px;border:1.5px solid var(--navy);background:transparent;color:var(--navy);font-size:16px;font-weight:700}
+.foot{padding:0 20px max(24px,env(safe-area-inset-bottom));display:flex;gap:12px;flex:0 0 auto}
+.btn-prev{flex:0 0 96px;height:56px;border-radius:28px;border:1.5px solid #CBBF9F;background:transparent;color:var(--brown);font-size:16px;font-weight:500}
+.btn-prev:disabled{opacity:.4}
+.btn-next{flex:1;height:56px;border-radius:28px;border:none;background:var(--navy);color:var(--ivory);font-size:17px;font-weight:700}
+.btn-next:active,.btn-gold:active{transform:scale(.98)}
+/* settings */
+.scrim{position:absolute;inset:0;background:rgba(12,18,38,.55);display:none;flex-direction:column;justify-content:flex-end;z-index:5}
+.scrim.on{display:flex}
+.sheet{background:#fff;border-radius:24px 24px 0 0;padding:20px 20px max(32px,env(safe-area-inset-bottom));display:flex;flex-direction:column;max-height:90%;overflow-y:auto}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sheet h2{margin:0;font-size:22px;color:var(--navy)}
+.btn-done{height:44px;padding:0 16px;border:none;border-radius:22px;background:var(--navy);color:var(--ivory);font-size:15px;font-weight:700}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;border-bottom:1px solid #EEE7D6}
+.opt p{margin:0}
+.opt .l{font-size:16px;font-weight:500}
+.opt .s{margin-top:3px;font-size:13px;color:#6B5A36}
+.sw{position:relative;flex:0 0 60px;width:60px;height:44px;border:none;background:transparent;padding:0}
+.sw::before{content:"";position:absolute;left:4px;top:6px;width:52px;height:32px;border-radius:16px;background:#CFC6B0;transition:background .15s}
+.sw::after{content:"";position:absolute;top:10px;left:8px;width:24px;height:24px;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s}
+.sw[aria-checked="true"]::before{background:var(--navy)}
+.sw[aria-checked="true"]::after{left:28px}
+.sizes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:#F3EEE2;border-radius:24px;padding:4px}
+.sizes button{height:40px;border:none;border-radius:20px;background:transparent;color:var(--brown);font-size:15px;font-weight:500}
+.sizes button[aria-pressed="true"]{background:var(--navy);color:var(--ivory);font-weight:700}
+.note{margin:10px 0 0;font-size:12px;line-height:1.6;color:#6B5A36}
+.head{padding-top:max(6px,env(safe-area-inset-top))}
+.pick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;margin-bottom:18px}
+.pick button{height:56px;border:1.5px solid rgba(255,255,255,.25);border-radius:14px;background:transparent;color:var(--muted);font-size:15px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.2;padding:0}
+.pick button small{font-size:11px;font-weight:500;color:var(--gold-l)}
+.pick button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.pick button[aria-pressed="true"] small{color:var(--navy)}
+.dmhead{display:flex;align-items:center;justify-content:space-between;padding-top:20px;margin-top:16px;border-top:1px solid #EEE7D6}
+.dmhead p{margin:0;font-size:16px;font-weight:500}
+.btn-tiny{height:36px;padding:0 14px;border:1.5px solid #CBBF9F;border-radius:18px;background:transparent;color:var(--brown);font-size:13px;font-weight:500}
+.dmrow{display:flex;align-items:center;gap:10px;margin-top:8px}
+.dmrow>span{width:22px;font-size:15px;font-weight:700;color:var(--navy);text-align:center}
+.dmrow>span.sun{color:#A8432F}
+.seg4{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:#F3EEE2;border-radius:22px;padding:3px}
+.seg4 button{height:40px;border:none;border-radius:20px;background:transparent;color:var(--brown);font-size:14px;font-weight:500;padding:0}
+.seg4 button[aria-pressed="true"]{background:var(--navy);color:var(--ivory);font-weight:700}
+.helpbtn{position:absolute;top:max(14px,env(safe-area-inset-top));left:12px;width:72px;border:none;background:transparent;padding:4px 0;z-index:2;display:flex;flex-direction:column;align-items:center;gap:5px;color:var(--ivory)}
+.helpbtn .hi{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1.5px rgba(233,214,161,.7);color:var(--gold-l)}
+.helpbtn .pn{font-size:13px;font-weight:700;color:var(--ivory);line-height:1.3}
+#guide{background:var(--ivory)}
+#guide .hbody{padding-top:16px}
+.gcard{display:flex;gap:14px;background:#fff;border:1px solid #E4DCC8;border-radius:16px;padding:16px;margin-bottom:10px}
+.gno{flex:0 0 28px;height:28px;border-radius:14px;background:var(--navy);color:var(--gold-l);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.gcard h3,.gorder h3{margin:2px 0 6px;font-size:17px;color:var(--navy)}
+.gcard p{margin:0;font-size:15px;line-height:1.65;color:var(--brown)}
+.gcard b,.gorder b{color:var(--navy)}
+.gorder{background:#FFFCF3;border:1.5px solid var(--gold);border-radius:16px;padding:16px 18px;margin-top:6px}
+.gorder ol{margin:4px 0 12px;padding-left:20px;font-size:15px;line-height:1.75;color:var(--brown)}
+.gtable{width:100%;border-collapse:collapse;font-size:14px}
+.gtable th{text-align:left;font-weight:500;color:var(--navy);padding:6px 0;border-top:1px solid #EEE7D6}
+.gtable td{text-align:right;color:var(--brown);padding:6px 0;border-top:1px solid #EEE7D6}
+.profbtn{position:absolute;top:max(14px,env(safe-area-inset-top));right:12px;width:92px;border:none;background:transparent;padding:4px 0;z-index:2;display:flex;flex-direction:column;align-items:center;gap:5px}
+.profbtn .pn{max-width:92px;font-size:13px;font-weight:700;color:var(--ivory);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.profbtn .face{box-shadow:0 0 0 1.5px rgba(233,214,161,.7)}
+.profbtn .pn.empty{font-weight:500;color:var(--muted)}
+.av{position:relative;display:inline-block;flex:0 0 auto}
+.av .face{position:absolute;border-radius:50%;overflow:hidden;display:block}
+.greet{margin:12px 0 0;font-size:15px;font-weight:500;color:var(--gold-l)}
+#profile{background:var(--ivory)}
+.pcard{display:flex;flex-direction:column;align-items:center;gap:12px}
+.pname input{width:230px;height:44px;border:1.5px solid rgba(255,255,255,.3);border-radius:22px;background:rgba(255,255,255,.08);color:#fff;text-align:center;font-family:inherit;font-size:16px;-webkit-user-select:text;user-select:text;outline:none}
+.pname input::placeholder{color:#9AA6C2}
+.pname input:focus{border-color:var(--gold)}
+.sec{margin:20px 0 10px;font-size:18px;color:var(--navy)}
+.sec:first-child{margin-top:6px}
+.avgrid,.frgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.frgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.avopt,.fropt{position:relative;background:#fff;border:1.5px solid #E4DCC8;border-radius:16px;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--brown)}
+.avopt.sel,.fropt.sel{border:2px solid var(--navy);box-shadow:0 0 0 3px rgba(27,43,82,.12)}
+.avopt.locked .av,.fropt.locked .av{filter:grayscale(1);opacity:.35}
+.cap{font-size:12px;font-weight:500;line-height:1.3}
+.lock{position:absolute;top:42px;left:50%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:13px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center}
+.upic{width:64px;height:64px;border-radius:32px;border:1.5px dashed #CBBF9F;display:flex;align-items:center;justify-content:center;color:var(--brown)}
+.hint{margin:8px 0 0;min-height:18px;font-size:13px;color:#8A4524}
+.rwgrid{display:flex;flex-direction:column;gap:8px}
+.rw{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #E4DCC8;border-radius:16px;padding:12px 14px}
+.rw .rwpv{flex:0 0 56px;height:56px}
+.rw:not(.got) .rwpv .av{filter:grayscale(1);opacity:.4}
+.rwtx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.rwtx b{font-size:15px;color:var(--navy)}
+.rwtx>span{font-size:13px;color:#6B5A36}
+.rwbar{height:5px;border-radius:3px;background:#EEE7D6;overflow:hidden;margin-top:5px}
+.rwbar i{display:block;height:5px;background:var(--gold)}
+.rwtx em{font-style:normal;font-size:12px;font-weight:700;color:#7A5E22;margin-top:2px}
+.rw.got{border-color:var(--gold);background:#FFFCF3}
+.rwno{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;margin-right:6px;border-radius:10px;background:#F0EBDF;color:#6B5A36;font-size:11px;font-weight:700;vertical-align:1px}
+.toptag{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#1B2B52;background:#F2D27A;border-radius:8px;padding:1px 7px;vertical-align:2px}
+.rw.top{background:#1B2B52;border:1.5px solid #D8B45C}
+.rw.top .rwtx b{color:#F2D27A}
+.rw.top .rwtx>span{color:#C9D2E6}
+.rw.top .rwtx em{color:#F2D27A}
+.rw.top .rwbar{background:rgba(255,255,255,.15)}
+.rw.top .rwno{background:#D8B45C;color:#1B2B52}
+.rw.top:not(.got) .rwpv .av{filter:grayscale(.6);opacity:.55}
+.toptitle{margin:18px 0 8px;font-size:14px;font-weight:700;color:#7A5E22}
+.newreward{display:none;flex-direction:column;gap:10px;width:100%;background:#FFFCF3;border:1.5px solid var(--gold);border-radius:16px;padding:14px;text-align:left}
+.nr-title{margin:0;font-size:15px;font-weight:700;color:var(--navy)}
+.nr-item{display:flex;gap:12px;align-items:center}
+.nr-item b{display:block;font-size:15px;color:var(--navy)}
+.nr-item span{font-size:13px;color:#6B5A36}
+.nr-item span.chtag{font-size:11px;color:#fff}
+.nr-item span.toptag{font-size:11px;color:#1B2B52}
+.card-head .count{margin-left:auto}
+.txt-btn{flex:0 0 auto;height:36px;margin:-6px -8px 0 4px;padding:0 10px;border:none;border-radius:18px;background:#F3EEE2;color:var(--brown);font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px;align-self:flex-start}
+.txt-btn.light{position:absolute;top:14px;right:14px;margin:0;background:rgba(255,255,255,.1);color:var(--ivory);z-index:2}
+.beadview{flex:1 1 auto;min-height:0;position:relative;display:none;flex-direction:column;background:var(--navy);border-radius:20px;overflow:hidden;color:var(--ivory);touch-action:pan-y;cursor:pointer}
+.bv-stage{position:relative;flex:0 0 200px;overflow:hidden}
+.bv-halo{position:absolute;left:50%;top:96px;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:rgba(var(--b-glow),.14)}
+.bv-wheel{position:absolute;left:50%;top:616px;width:0;height:0;transition:transform .55s cubic-bezier(.34,1.28,.64,1)}
+.bv-thread{position:absolute;left:-520px;top:-520px;width:1040px;height:1040px;border-radius:50%;border:1.5px solid var(--b-thread);box-sizing:border-box}
+.bvb{position:absolute;left:0;top:0;width:0;height:0}
+.bvb i{position:absolute;display:block;border-radius:50%;transform:translate(-50%,-50%);transition:transform .35s ease,background .3s,box-shadow .3s}
+.bvb.s i{width:18px;height:18px;background-color:var(--b-up)}
+.bvb.b i{width:28px;height:28px;background-color:var(--b-up-big)}
+.bvb.m i{width:24px;height:30px;background-color:var(--b-up-big)}
+.bvb.s i,.bvb.b i,.bvb.m i{background-image:var(--b-sheen)}
+.bvb.x i{width:30px;height:40px;border-radius:0;background:transparent;color:var(--b-cross)}
+.bvb.x svg{display:block;width:100%;height:100%}
+.bvb.done i{background-color:var(--b-done)}
+.bvb.x.done i{background:transparent;color:var(--b-done)}
+.bvb.cur i{transform:translate(-50%,-50%) scale(1.5);background-color:var(--b-cur);box-shadow:0 0 0 3px rgb(var(--b-glow)),0 0 22px 6px rgba(var(--b-glow),.55)}
+.bvb.x.cur i{background:transparent;box-shadow:none;color:var(--b-cur);filter:drop-shadow(0 0 8px rgba(var(--b-glow),.95))}
+.fx{position:absolute;left:50%;top:96px;width:0;height:0;pointer-events:none;z-index:1}
+.fx.big{transform:scale(1.45)}
+.fx span{position:absolute;left:0;top:0;display:block}
+.fx-glow{width:84px;height:84px;margin:-42px 0 0 -42px;border-radius:50%;background:radial-gradient(circle,rgba(var(--b-glow),.95) 0,rgba(var(--b-glow),.45) 35%,rgba(var(--b-glow),0) 70%);animation:fxGlow .9s ease-out forwards}
+@keyframes fxGlow{0%{transform:scale(.4);opacity:0}25%{opacity:1}100%{transform:scale(1.7);opacity:0}}
+.fx-ring{width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2.5px solid rgba(var(--b-glow),.95);box-sizing:border-box;opacity:0;animation:fxRing 1s ease-out forwards}
+@keyframes fxRing{0%{transform:scale(.6);opacity:1}100%{transform:scale(3.2);opacity:0}}
+.fx-spark{width:8px;height:8px;margin:-4px 0 0 -4px;background:rgb(var(--b-glow));box-shadow:0 0 6px rgba(var(--b-glow),.9);opacity:0;animation:fxSpark .85s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes fxSpark{0%{transform:rotate(var(--a)) translateX(12px) rotate(45deg) scale(1.1);opacity:1}100%{transform:rotate(var(--a)) translateX(var(--d)) rotate(45deg) scale(.15);opacity:0}}
+.fx-ray{width:4px;height:58px;margin:-58px 0 0 -2px;border-radius:2px;background:linear-gradient(to top,rgba(var(--b-glow),0) 30%,rgba(var(--b-glow),.95));transform-origin:50% 100%;opacity:0;animation:fxRay 1.1s ease-out forwards}
+@keyframes fxRay{0%{transform:rotate(var(--a)) scaleY(.3);opacity:0}35%{opacity:1}100%{transform:rotate(calc(var(--a) + 24deg)) scaleY(1.25);opacity:0}}
+.skin{position:relative}
+.skin.locked .sw5 i{filter:grayscale(1);opacity:.35}
+.skin .sw5{position:relative}
+.skin .lk,.fxopts .lk{display:inline-flex}
+.skin .lk{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff}
+.fxopts button.locked{color:#A99F88;background:#F6F2E9;border-style:dashed}
+.chtag{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#fff;background:#3E6B8F;border-radius:8px;padding:1px 7px;vertical-align:2px}
+.sec-row{display:flex;align-items:baseline;justify-content:space-between}
+.chcount{font-family:'Noto Sans KR','Noto Sans CJK KR',system-ui,sans-serif;font-size:13px;font-weight:700;color:#7A5E22}
+.rw.ch.got{border-color:#3E6B8F;background:#F2F6FA}
+.rw.ch.got .rwtx em{color:#3E6B8F}
+.rw.ch .rwbar i{background:#3E6B8F}
+.rw.ch:not(.got) .rwpv svg{filter:grayscale(1);opacity:.45}
+.toast{position:absolute;left:16px;right:16px;top:max(16px,env(safe-area-inset-top));z-index:9;display:flex;gap:12px;align-items:center;background:#fff;border:1.5px solid var(--gold);border-radius:16px;padding:12px 14px;box-shadow:0 8px 24px rgba(12,18,38,.25);transform:translateY(-140%);opacity:0;transition:transform .35s cubic-bezier(.2,.9,.3,1.2),opacity .25s;pointer-events:none}
+.toast.on{transform:none;opacity:1}
+.toast b{display:block;font-size:14px;color:var(--navy)}
+.toast span{font-size:13px;color:#6B5A36}
+.toast svg{flex:0 0 auto}
+.skins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.skin{border:1.5px solid #E4DCC8;border-radius:14px;background:#fff;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--brown)}
+.skin[aria-pressed="true"]{border:2px solid var(--navy);box-shadow:0 0 0 3px rgba(27,43,82,.12)}
+.skin .sw5{width:100%;height:34px;border-radius:10px;background:var(--navy);display:flex;align-items:center;justify-content:center;gap:5px}
+.skin .sw5 i{display:block;width:10px;height:10px;border-radius:50%}
+.skin .sw5 i.c{width:15px;height:15px}
+.fxwrap{display:flex;gap:12px;align-items:stretch;margin-top:10px}
+.fxprev{position:relative;flex:0 0 96px;height:96px;border-radius:16px;background:var(--navy);overflow:hidden}
+.fxprev .fx{top:48px}
+.fxprev .pb{position:absolute;left:50%;top:48px;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;background-color:var(--b-cur);box-shadow:0 0 0 3px rgb(var(--b-glow)),0 0 16px 4px rgba(var(--b-glow),.55)}
+.fxprev .pl,.fxprev .pr{position:absolute;top:48px;width:14px;height:14px;margin-top:-7px;border-radius:50%}
+.fxprev .pl{left:8px;background-color:var(--b-done);background-image:var(--b-sheen)}
+.fxprev .pr{right:8px;background-color:var(--b-up);background-image:var(--b-sheen)}
+.fxopts{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.fxopts button{height:44px;border:1.5px solid #E4DCC8;border-radius:12px;background:#fff;color:var(--brown);font-size:14px;font-weight:500;padding:0}
+.fxopts button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--ivory);font-weight:700}
+.bv-info{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 20px;text-align:center}
+.bv-phase{margin:0;font-size:14px;font-weight:500;color:var(--gold-l)}
+.bv-title{margin:0;font-size:30px;font-weight:700;color:#fff}
+.bv-count{margin:0;font-size:44px;font-weight:700;color:#F2D27A;line-height:1.1;min-height:4px}
+.bv-med{margin:0;font-size:15px;line-height:1.6;color:var(--muted)}
+.bv-tip{margin:0 0 16px;text-align:center;font-size:12px;color:#8E9AB8}
+.donecard{overflow-y:auto;justify-content:safe center}
+.donecard>*{flex-shrink:0}
+#profile{overflow-y:auto;-webkit-overflow-scrolling:touch}
+#profile .hbody{flex:none;overflow:visible}
+textarea,input{-webkit-user-select:text;user-select:text}
+.fl{display:block;margin:14px 0 6px;font-size:14px;font-weight:500;color:var(--ink)}
+.fin{width:100%;border:1.5px solid #E4DCC8;border-radius:12px;padding:10px 12px;font-family:inherit;font-size:15px;line-height:1.6;color:var(--ink);background:#fff;outline:none;resize:vertical}
+input.fin{height:44px;padding:0 12px}
+.fin:focus{border-color:var(--navy)}
+.btn-link.pvlink{align-self:center;color:#6B5A36;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+#privacy{background:var(--ivory)}
+#privacy .hbody{padding-top:16px}
+.pvbody h3{margin:18px 0 6px;font-size:16px;color:var(--navy)}
+.pvbody p,.pvbody li{font-size:15px;line-height:1.7;color:var(--brown);margin:0}
+.pvbody ul{margin:4px 0 0;padding-left:20px}
+.pvbody .pvdate{font-size:13px;color:#7A5E22;margin-bottom:6px}
+.pvbody a.pvweb{display:inline-flex;align-items:center;min-height:44px;margin-top:18px;color:var(--navy);font-weight:700}
+.btn-link{margin-top:6px;height:44px;border:none;background:transparent;color:var(--muted);font-size:15px;display:flex;align-items:center;gap:8px}
+/* history */
+#history{background:var(--ivory)}
+.hhead{background:var(--navy);color:var(--ivory);padding:max(6px,env(safe-area-inset-top)) 20px 20px;border-radius:0 0 24px 24px;display:flex;flex-direction:column;gap:12px;flex:0 0 auto}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stat{background:rgba(255,255,255,.08);border-radius:14px;padding:12px 8px;text-align:center}
+.stat b{display:block;font-size:24px;font-weight:700;color:#fff;line-height:1.2}
+.stat span{font-size:12px;color:var(--muted)}
+.hbody{flex:1;min-height:0;overflow-y:auto;padding:12px 20px 28px;-webkit-overflow-scrolling:touch}
+.mnav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.mnav h2{margin:0;font-size:20px;color:var(--navy)}
+.mnav button{width:44px;height:44px;border:none;background:transparent;color:var(--navy);display:flex;align-items:center;justify-content:center;padding:0}
+.mnav button:disabled{opacity:.25}
+.cal{background:#fff;border:1px solid #E4DCC8;border-radius:20px;padding:12px 8px}
+.wk,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.wk span{text-align:center;font-size:12px;color:#6B5A36;padding:2px 0 8px}
+.wk span:first-child{color:#A8432F}
+.day{height:48px;border:none;background:transparent;padding:0;display:flex;align-items:center;justify-content:center;position:relative;color:var(--ink)}
+.day .n{width:36px;height:36px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.day.done .n{background:var(--gold);color:var(--navy);font-weight:700}
+.day.part .n{border:2px solid #B5643A;color:#8A4524;font-weight:700}
+.day.prog .n{border:2px dashed var(--navy);color:var(--navy);font-weight:700}
+.day.today::after{content:"";position:absolute;bottom:2px;left:50%;margin-left:-2px;width:4px;height:4px;border-radius:2px;background:var(--navy)}
+.day.sel .n{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--navy)}
+.day .x{position:absolute;top:1px;right:2px;font-size:10px;font-weight:700;color:#7A5E22}
+.day.blank{visibility:hidden}
+.day.future{color:#B3AB9A}
+.legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:14px 0 4px;font-size:13px;color:var(--brown)}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:7px;display:inline-block}
+.detail{margin-top:12px;background:#fff;border:1px solid #E4DCC8;border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+.detail h3{margin:0;font-size:18px;color:var(--navy)}
+.detail p{margin:0;font-size:15px;line-height:1.6;color:var(--brown)}
+.badge{align-self:flex-start;font-size:12px;font-weight:700;border-radius:10px;padding:3px 10px}
+.badge.b-done{background:var(--gold);color:var(--navy)}
+.badge.b-part{background:#F6E3D8;color:#8A4524}
+.badge.b-prog{background:#E3E8F3;color:var(--navy)}
+.badge.b-none{background:#F0EBDF;color:#6B5A36}
+.btn-small{align-self:flex-start;margin-top:4px;height:44px;padding:0 18px;border:none;border-radius:22px;background:var(--navy);color:var(--ivory);font-size:15px;font-weight:700}
+#splash{padding-top:max(80px,12vh,env(safe-area-inset-top))}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="splash" class="screen on" aria-label="시작 화면">
+<button type="button" class="helpbtn" id="helpBtn"><span class="hi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H10a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H4z"/><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H14a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h6z"/></svg></span><span class="pn">사용법</span></button>
+<button type="button" class="profbtn" id="profBtn" aria-label="내 프로필"></button>
+<svg width="220" height="220" viewBox="0 0 1024 1024" aria-hidden="true" id="emblem"></svg>
+<h1 class="serif">묵주기도</h1>
+<p class="greet" id="greet" style="display:none"></p>
+<p class="sub">성모님과 함께 걷는<br>하루 한 단의 기도</p>
+<div class="grow"></div>
+<p class="today" id="today"></p>
+<div class="pick" id="pick" role="group" aria-label="오늘 바칠 신비 선택"></div>
+<button type="button" class="btn-gold" id="startBtn">기도 시작하기</button>
+<button type="button" class="btn-line" id="resumeBtn" hidden></button>
+<div style="display:flex;gap:18px;justify-content:center">
+<button type="button" class="btn-link" id="histBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>기도 기록 보기</button>
+<button type="button" class="btn-link" id="splashSet"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>설정</button>
+</div>
+</section>
+
+<section id="history" class="screen" aria-label="기도 기록">
+<div class="hhead">
+<div class="bar">
+<button type="button" class="icon-btn" id="hBack" aria-label="시작 화면으로" style="margin-left:-10px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<h1 class="serif">기도 기록</h1>
+<button type="button" class="icon-btn" id="hProfile" aria-label="내 프로필과 리워드" style="margin-right:-10px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="5"/><path d="M8.5 13.5 7 21l5-2.5 5 2.5-1.5-7.5"/></svg></button>
+</div>
+<div class="stats">
+<div class="stat"><b id="stDone">0</b><span>이달 완료</span></div>
+<div class="stat"><b id="stPart">0</b><span>이달 중단</span></div>
+<div class="stat"><b id="stStreak">0</b><span>연속 완료(일)</span></div>
+</div>
+</div>
+<div class="hbody">
+<div class="mnav">
+<button type="button" id="mPrev" aria-label="이전 달"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<h2 class="serif" id="mTitle"></h2>
+<button type="button" id="mNext" aria-label="다음 달"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+</div>
+<div class="cal">
+<div class="wk"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+<div class="days" id="days"></div>
+</div>
+<div class="legend">
+<span><i style="background:#D8B45C"></i>완료</span>
+<span><i style="border:2px solid #B5643A"></i>중단</span>
+<span><i style="border:2px dashed #1B2B52"></i>오늘 진행 중</span>
+</div>
+<div class="detail" id="detail"></div>
+</div>
+</section>
+
+<section id="pray" class="screen" aria-label="기도 진행 화면">
+<div class="head">
+<div class="bar">
+<button type="button" class="icon-btn" id="backBtn" aria-label="시작 화면으로" style="margin-left:-10px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<h1 class="serif">묵주기도</h1>
+<button type="button" class="icon-btn" id="setBtn" aria-label="기도 설정" style="margin-right:-10px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg></button>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="row">
+<div class="ring" id="ring" role="img" aria-label="묵주 진행 위치">
+<span class="loop"></span><span class="chain"></span>
+<svg width="16" height="20" viewBox="0 0 16 20" aria-hidden="true" id="cross"><path d="M6 0 H10 V5 H16 V9 H10 V20 H6 V9 H0 V5 H6 Z"/></svg>
+</div>
+<div class="info">
+<p class="set" id="setName"></p>
+<p class="phase serif" id="phase"></p>
+<div><div class="prog"><i id="progBar" style="width:0"></i></div><p class="ptext" id="ptext"></p></div>
+<div class="dots" id="dots"></div>
+<span class="chip" id="chip"></span>
+</div>
+</div>
+</div>
+<div class="body">
+<div class="card" id="card">
+<div class="card-head"><h2 class="serif" id="ptitle"></h2><span class="count" id="count"></span><button type="button" class="txt-btn" id="hideText" aria-label="기도문 숨기기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c5 0 9 4.5 10 7-.4 1-1.2 2.3-2.4 3.5M6.6 6.6C4.4 8 2.8 10.2 2 12c1 2.5 5 7 10 7 1.6 0 3-.4 4.3-1.1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg><span>숨기기</span></button></div>
+<p class="ptxt" id="ptxt"></p>
+</div>
+<div class="beadview" id="beadView">
+<button type="button" class="txt-btn light" id="showText" aria-label="기도문 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c1-2.5 5-7 10-7s9 4.5 10 7c-1 2.5-5 7-10 7S3 14.5 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>기도문 보기</span></button>
+<div class="bv-stage" aria-hidden="true"><div class="bv-halo"></div><div class="bv-wheel" id="wheel"></div><div class="fx" id="fx"></div></div>
+<div class="bv-info" aria-live="polite">
+<p class="bv-phase" id="bvPhase"></p>
+<h2 class="serif bv-title" id="bvTitle"></h2>
+<p class="bv-count" id="bvCount"></p>
+<p class="bv-med" id="bvMed"></p>
+</div>
+<p class="bv-tip">화면을 누르거나 옆으로 밀어 넘기세요</p>
+</div>
+<div class="donecard" id="donecard">
+<svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" fill="#F4E7C8"/><path d="M32 14 H40 V26 H52 V34 H40 V58 H32 V34 H20 V26 H32 Z" fill="#C9A24A"/></svg>
+<h2 class="serif">묵주기도를 마쳤습니다</h2>
+<p><span id="doneSet"></span> 5단을 모두 바쳤습니다.<br>오늘 하루도 성모님과 함께하시길 빕니다.</p>
+<div class="newreward" id="newReward"></div>
+<button type="button" class="btn-outline" id="restartBtn">처음부터 다시 바치기</button>
+<button type="button" class="btn-link" id="doneHist" style="color:var(--navy);margin-top:0">기도 기록 보기</button>
+</div>
+</div>
+<div class="foot" id="foot">
+<button type="button" class="btn-prev" id="prevBtn">이전</button>
+<button type="button" class="btn-next" id="nextBtn">다음</button>
+</div>
+</section>
+
+<section id="privacy" class="screen" aria-label="개인정보처리방침">
+<div class="hhead">
+<div class="bar">
+<button type="button" class="icon-btn" id="pvBack" aria-label="이전 화면으로" style="margin-left:-10px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<h1 class="serif">개인정보처리방침</h1>
+<span style="width:44px"></span>
+</div>
+</div>
+<div class="hbody pvbody" id="pvBody"></div>
+</section>
+
+<section id="guide" class="screen" aria-label="앱 사용법">
+<div class="hhead">
+<div class="bar">
+<button type="button" class="icon-btn" id="gBack" aria-label="시작 화면으로" style="margin-left:-10px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<h1 class="serif">앱 사용법</h1>
+<span style="width:44px"></span>
+</div>
+</div>
+<div class="hbody"><div class="gcard"><span class="gno">1</span><div><h3 class="serif">시작하기</h3><p>시작 화면에 오늘 요일에 맞는 신비가 자동으로 골라져 있어요. <b>기도 시작하기</b>를 누르면 됩니다. 다른 신비를 바치고 싶은 날은 신비 버튼을 눌러 그날만 바꿀 수 있어요.</p></div></div><div class="gcard"><span class="gno">2</span><div><h3 class="serif">기도 넘기기</h3><p>기도 하나를 마칠 때마다 <b>다음</b>을 누르세요. 위쪽 묵주 그림에서 지금 잡을 구슬이 빛나고, 성모송은 <b>4 / 10</b>처럼 몇 번째인지 보여요. 잘못 눌렀다면 <b>이전</b>으로 돌아가요.</p></div></div><div class="gcard"><span class="gno">3</span><div><h3 class="serif">기도문 숨기기</h3><p>기도문을 외우신다면 기도문 카드 오른쪽 위 <b>숨기기</b>를 누르세요. 묵주가 돌아가는 화면으로 바뀌어요. 화면 아무 데나 누르거나 <b>왼쪽으로 밀면 다음</b>, <b>오른쪽으로 밀면 이전</b>이에요.</p></div></div><div class="gcard"><span class="gno">4</span><div><h3 class="serif">이어서 기도하기</h3><p>중간에 앱을 닫아도 위치가 저장돼요. 다시 열면 시작 화면에 <b>이어서 기도하기</b>가 나와요.</p></div></div><div class="gcard"><span class="gno">5</span><div><h3 class="serif">설정</h3><p>기도 화면 오른쪽 위 아이콘이나 시작 화면의 <b>설정</b>에서 진동, 종소리, 구슬 소리, 기도 중 화면 켜두기, 글자 크기, <b>요일별 신비</b>를 바꿀 수 있어요.</p></div></div><div class="gcard"><span class="gno">6</span><div><h3 class="serif">기도 기록</h3><p>시작 화면의 <b>기도 기록 보기</b>에서 달력을 볼 수 있어요. <b>금색</b>은 완료한 날, <b>갈색 테두리</b>는 중단한 날, <b>점선</b>은 오늘 진행 중이에요. 날짜를 누르면 어디까지 바쳤는지 나와요.</p></div></div><div class="gcard"><span class="gno">7</span><div><h3 class="serif">프로필과 리워드</h3><p>시작 화면 오른쪽 위 사진을 누르면 프로필이에요. 세례명, 프로필 사진, 테두리, <b>묵주 스킨</b>, <b>구슬 넘김 효과</b>를 고를 수 있어요. 처음에는 금빛 스킨과 은은한 빛만 쓸 수 있어요. 앱을 쓰다 보면 <b>도전과제</b> 7가지가 자연스럽게 달성되며 스킨과 효과가 열려요. 꾸준히 기도하면 리워드 12가지도 하나씩 열리고, 11·12번은 최상위 리워드예요.</p></div></div><div class="gorder">
+<h3 class="serif">묵주기도 바치는 순서</h3>
+<ol>
+<li><b>십자가</b> · 성호경 → 1단 묵상 → 사도신경</li>
+<li><b>첫 큰 구슬</b> · 주님의 기도</li>
+<li><b>작은 구슬 3개</b> · 성모송 3번</li>
+<li><b>두 번째 큰 구슬</b> · 영광송, 구원의 기도</li>
+<li><b>각 단 (5번 반복)</b> · 신비 묵상 → 주님의 기도 → 성모송 10번 → 영광송 → 구원의 기도 (1단 묵상은 시작할 때 미리 바쳐요)</li>
+<li><b>마침</b> · 성모 찬송, 성호경</li>
+</ol>
+<table class="gtable"><tr><th>환희의 신비</th><td>월 · 토</td></tr><tr><th>빛의 신비</th><td>목</td></tr><tr><th>고통의 신비</th><td>화 · 금</td></tr><tr><th>영광의 신비</th><td>수 · 일</td></tr></table>
+</div>
+<button type="button" class="btn-gold" id="gStart" style="margin-top:18px">기도 시작하러 가기</button>
+<button type="button" class="btn-link pvlink" id="pvFromGuide" style="margin:8px auto 0">개인정보처리방침</button>
+</div>
+</section>
+
+<section id="profile" class="screen" aria-label="내 프로필">
+<div class="hhead">
+<div class="bar">
+<button type="button" class="icon-btn" id="pBack" aria-label="시작 화면으로" style="margin-left:-10px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+<h1 class="serif">내 프로필</h1>
+<span style="width:44px"></span>
+</div>
+<div class="pcard">
+<div id="pAv"></div>
+<div class="pname"><input id="pName" type="text" maxlength="20" placeholder="세례명 또는 이름" aria-label="세례명 또는 이름"></div>
+</div>
+<div class="stats">
+<div class="stat"><b id="psTotal">0</b><span>총 완료(회)</span></div>
+<div class="stat"><b id="psBest">0</b><span>최장 연속(일)</span></div>
+<div class="stat"><b id="psCur">0</b><span>현재 연속(일)</span></div>
+</div>
+</div>
+<div class="hbody">
+<h2 class="sec serif">프로필 사진</h2>
+<div class="avgrid" id="avGrid"></div>
+<p class="hint" id="avHint"></p>
+<h2 class="sec serif">테두리</h2>
+<div class="frgrid" id="frGrid"></div>
+<p class="hint" id="frHint"></p>
+<h2 class="sec serif">묵주 스킨</h2>
+<div class="skins" style="margin-top:0" id="skinGrid" role="group" aria-label="묵주 스킨"></div>
+<p class="hint" id="skinHint"></p>
+<h2 class="sec serif">구슬 넘김 효과</h2>
+<div class="fxwrap">
+<div class="fxprev" aria-hidden="true"><span class="pl"></span><span class="pr"></span><span class="pb"></span><div class="fx" id="fxPrev"></div></div>
+<div class="fxopts" id="fxGrid" role="group" aria-label="구슬 넘김 효과"></div>
+</div>
+<p class="hint" id="fxHint"></p>
+<p class="note">구슬을 넘길 때 나오는 빛이에요. 기도문을 숨겼을 때 묵주 화면에서 크게 보이고, 한 단이 시작될 때는 더 크게 빛나요.</p>
+<h2 class="sec serif sec-row">도전과제 <span class="chcount" id="chCount"></span></h2>
+<p class="note" style="margin:-4px 0 10px">앱을 쓰다 보면 자연스럽게 달성돼요. 달성하면 묵주 스킨과 넘김 효과가 열리고 바로 적용돼요.</p>
+<div class="rwgrid" id="chGrid"></div>
+<h2 class="sec serif">리워드</h2>
+<div class="rwgrid" id="rwGrid"></div>
+</div>
+</section>
+<input type="file" id="photoIn" accept="image/*" hidden>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="scrim" id="scrim">
+<div class="sheet" role="dialog" aria-label="기도 설정">
+<div class="sheet-head"><h2 class="serif">기도 설정</h2><button type="button" class="btn-done" id="closeSet">완료</button></div>
+<div class="opt"><div><p class="l">구슬 넘길 때 진동</p><p class="s">한 단이 시작될 때는 두 번 울려요</p></div><button type="button" class="sw" role="switch" data-key="vib" aria-label="구슬 넘길 때 진동"></button></div>
+<div class="opt"><div><p class="l">단 시작 종소리</p><p class="s">신비 묵상이 시작될 때 맑은 종소리</p></div><button type="button" class="sw" role="switch" data-key="bell" aria-label="단 시작 종소리"></button></div>
+<div class="opt"><div><p class="l">구슬 넘김 소리</p><p class="s">구슬마다 작은 딸깍 소리</p></div><button type="button" class="sw" role="switch" data-key="tick" aria-label="구슬 넘김 소리"></button></div>
+<div class="opt"><div><p class="l">기도 중 화면 켜두기</p><p class="s">기도하는 동안 화면이 꺼지지 않아요</p></div><button type="button" class="sw" role="switch" data-key="keepOn" aria-label="기도 중 화면 켜두기"></button></div>
+<div style="display:flex;flex-direction:column;gap:10px;padding-top:16px">
+<p style="margin:0;font-size:16px;font-weight:500">기도문 글자 크기</p>
+<div class="sizes" id="sizes"></div>
+<p class="note" id="vibNote"></p>
+</div>
+<div class="dmhead"><p>요일별 신비</p><button type="button" class="btn-tiny" id="dmReset">기본값으로</button></div>
+<div id="dayMap"></div>
+<p class="note">매일 이 표대로 오늘의 신비가 자동으로 정해져요. 시작 화면이나 기도 화면 위쪽에서 그날만 다른 신비를 고를 수도 있어요.</p>
+<button type="button" class="btn-link pvlink" id="pvFromSet">개인정보처리방침</button>
+</div>
+</div>
+
+</div>
+<script>
+(function () {
+  'use strict';
+  var P = {
+    sign: { title: '성호경', text: '성부와 성자와 성령의 이름으로. 아멘.' },
+    creed: { title: '사도신경', text: '전능하신 천주 성부\n천지의 창조주를 저는 믿나이다.\n그 외아들 우리 주 예수 그리스도님\n성령으로 인하여 동정 마리아께 잉태되어 나시고\n본시오 빌라도 통치 아래서 고난을 받으시고\n십자가에 못박혀 돌아가시고 묻히셨으며\n저승에 가시어 사흗날에 죽은 이들 가운데서 부활하시고\n하늘에 올라 전능하신 천주 성부 오른편에 앉으시며\n그리로부터 산 이와 죽은 이를 심판하러 오시리라 믿나이다.\n성령을 믿으며\n거룩하고 보편된 교회와\n모든 성인의 통공을 믿으며\n죄의 용서와\n육신의 부활을 믿으며\n영원한 삶을 믿나이다. 아멘.' },
+    our: { title: '주님의 기도', text: '하늘에 계신 우리 아버지,\n아버지의 이름이 거룩히 빛나시며\n아버지의 나라가 오시며\n아버지의 뜻이 하늘에서와 같이 땅에서도 이루어지소서.\n오늘 저희에게 일용할 양식을 주시고\n저희에게 잘못한 이를 저희가 용서하오니\n저희 죄를 용서하시고\n저희를 유혹에 빠지지 않게 하시고\n악에서 구하소서. 아멘.' },
+    hail: { title: '성모송', text: '은총이 가득하신 마리아님, 기뻐하소서!\n주님께서 함께 계시니\n여인 중에 복되시며\n태중의 아들 예수님 또한 복되시나이다.\n천주의 성모 마리아님,\n이제와 저희 죽을 때에\n저희 죄인을 위하여 빌어주소서. 아멘.' },
+    glory: { title: '영광송', text: '영광이 성부와 성자와 성령께\n처음과 같이 이제와 항상 영원히. 아멘.' },
+    fatima: { title: '구원의 기도', text: '예수님,\n저희 죄를 용서하시며\n저희를 지옥 불에서 구하시고\n연옥 영혼을 돌보시며\n가장 버림받은 영혼들을 돌보소서.' },
+    salve: { title: '성모 찬송', text: '[성모 찬송 기도문 — 가톨릭 기도서 원문으로 넣어 주세요]' }
+  };
+  var SETS = [
+    { label: '환희', name: '환희의 신비', days: '월·토', short: ['예수님 잉태', '엘리사벳 방문', '예수님 탄생', '성전에 바치심', '성전에서 찾으심'],
+      full: ['마리아께서 예수님을 잉태하심을 묵상합시다.', '마리아께서 엘리사벳을 찾아보심을 묵상합시다.', '마리아께서 예수님을 낳으심을 묵상합시다.', '마리아께서 예수님을 성전에 바치심을 묵상합시다.', '마리아께서 잃으셨던 예수님을 성전에서 찾으심을 묵상합시다.'] },
+    { label: '빛', name: '빛의 신비', days: '목', short: ['세례받으심', '카나 혼인 잔치', '하느님 나라 선포', '거룩하게 변모하심', '성체성사 세우심'],
+      full: ['예수님께서 세례받으심을 묵상합시다.', '예수님께서 카나에서 첫 기적을 행하심을 묵상합시다.', '예수님께서 하느님 나라를 선포하심을 묵상합시다.', '예수님께서 거룩하게 변모하심을 묵상합시다.', '예수님께서 성체성사를 세우심을 묵상합시다.'] },
+    { label: '고통', name: '고통의 신비', days: '화·금', short: ['피땀 흘리심', '매맞으심', '가시관 쓰심', '십자가 지심', '십자가에 못박혀 돌아가심'],
+      full: ['예수님께서 우리를 위하여 피땀 흘리심을 묵상합시다.', '예수님께서 우리를 위하여 매맞으심을 묵상합시다.', '예수님께서 우리를 위하여 가시관 쓰심을 묵상합시다.', '예수님께서 우리를 위하여 십자가 지심을 묵상합시다.', '예수님께서 우리를 위하여 십자가에 못박혀 돌아가심을 묵상합시다.'] },
+    { label: '영광', name: '영광의 신비', days: '수·일', short: ['부활하심', '승천하심', '성령을 보내심', '성모님을 하늘에 불러올리심', '천상 모후의 관을 씌우심'],
+      full: ['예수님께서 부활하심을 묵상합시다.', '예수님께서 승천하심을 묵상합시다.', '예수님께서 성령을 보내심을 묵상합시다.', '예수님께서 마리아를 하늘에 불러올리심을 묵상합시다.', '예수님께서 마리아께 천상 모후의 관을 씌우심을 묵상합시다.'] }
+  ];
+  var DAY_SET = [3, 0, 2, 3, 1, 2, 0];
+  var WEEK = ['일', '월', '화', '수', '목', '금', '토'];
+  var SIZES = [['보통', 17], ['크게', 20], ['아주 크게', 23]];
+
+  /* bead order: 0 cross, 1 first big, 2-4 small, 5 second big, 6 medal, 7-60 loop */
+  var steps = [];
+  steps.push({ k: 'sign', phase: 'intro', bead: 0, hint: '십자가를 잡고' });
+  steps.push({ k: 'med', phase: 'intro', d: 0, bead: 0, hint: '십자가를 잡고' });
+  steps.push({ k: 'creed', phase: 'intro', bead: 0, hint: '십자가를 잡고' });
+  steps.push({ k: 'our', phase: 'intro', bead: 1, hint: '첫 큰 구슬' });
+  for (var i = 0; i < 3; i++) steps.push({ k: 'hail', phase: 'intro', n: i + 1, of: 3, bead: 2 + i, hint: '작은 구슬 ' + (i + 1) });
+  steps.push({ k: 'glory', phase: 'intro', after: true, of: 3, bead: 5, hint: '두 번째 큰 구슬' });
+  steps.push({ k: 'fatima', phase: 'intro', after: true, of: 3, bead: 5, hint: '두 번째 큰 구슬' });
+  for (var d = 0; d < 5; d++) {
+    var big = d === 0 ? 6 : 7 + (d - 1) * 11 + 10;
+    var bigHint = d === 0 ? '성모 메달' : '큰 구슬';
+    if (d > 0) steps.push({ k: 'med', phase: 'decade', d: d, of: 10, n: 0, bead: big, hint: bigHint });
+    steps.push({ k: 'our', phase: 'decade', d: d, of: 10, n: 0, bead: big, hint: bigHint });
+    for (var j = 0; j < 10; j++) steps.push({ k: 'hail', phase: 'decade', d: d, n: j + 1, of: 10, bead: 7 + d * 11 + j, hint: '작은 구슬 ' + (j + 1) });
+    var nb = d < 4 ? 7 + d * 11 + 10 : 6;
+    var nh = d < 4 ? '다음 큰 구슬' : '성모 메달';
+    steps.push({ k: 'glory', phase: 'decade', d: d, after: true, of: 10, bead: nb, hint: nh, loopDone: d === 4 });
+    steps.push({ k: 'fatima', phase: 'decade', d: d, after: true, of: 10, bead: nb, hint: nh, loopDone: d === 4 });
+  }
+  steps.push({ k: 'salve', phase: 'end', bead: 6, hint: '성모 메달' });
+  steps.push({ k: 'sign', phase: 'end', bead: 0, hint: '십자가를 잡고' });
+  var TOTAL = steps.length;
+
+  var KEY = 'rosary.v1';
+  var S = { step: 0, setIdx: DAY_SET[new Date().getDay()], dayMap: DAY_SET.slice(), pick: null, pickDay: '', done: false, vib: true, bell: true, tick: false, keepOn: true, fontIdx: 0, day: '' };
+  try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) for (var key in saved) S[key] = saved[key]; } catch (e) {}
+  var dayKey = new Date().toDateString();
+  if (!Array.isArray(S.dayMap) || S.dayMap.length !== 7) S.dayMap = DAY_SET.slice();
+  if (S.ver !== 4) { if (S.step > 0 && !S.done) S.step = 0; S.ver = 4; }
+  function autoSet() { return S.dayMap[new Date().getDay()]; }
+  function todayChoice() { return (S.pickDay === dayKey && typeof S.pick === 'number') ? S.pick : autoSet(); }
+  function daysOf(idx) {
+    var order = [1, 2, 3, 4, 5, 6, 0], out = [];
+    order.forEach(function (w) { if (S.dayMap[w] === idx) out.push(WEEK[w]); });
+    return out.length ? out.join('·') : '직접 선택';
+  }
+  if (S.day !== dayKey && S.step === 0) S.setIdx = todayChoice();
+  function save() { S.day = dayKey; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var bridge = window.AndroidBridge;
+
+  /* emblem */
+  (function () {
+    var svg = '<circle cx="512" cy="512" r="330" fill="none" stroke="#D8B45C" stroke-opacity="0.45" stroke-width="5"/>';
+    for (var i = 0; i < 35; i++) {
+      var a = (-90 + i * 360 / 35) * Math.PI / 180;
+      svg += '<circle cx="' + (512 + 330 * Math.cos(a)).toFixed(1) + '" cy="' + (512 + 330 * Math.sin(a)).toFixed(1) + '" r="' + (i % 7 === 0 ? 24 : 15) + '" fill="#D8B45C"/>';
+    }
+    svg += '<path d="M482 318 H542 V430 H648 V490 H542 V712 H482 V490 H376 V430 H482 Z" fill="#D8B45C"/>';
+    $('emblem').innerHTML = svg;
+  })();
+
+  /* ring beads */
+  var beadEls = {};
+  (function () {
+    var ring = $('ring');
+    function add(order, cx, cy, size) {
+      var el = document.createElement('span');
+      el.className = 'bead';
+      el.dataset.cx = cx; el.dataset.cy = cy; el.dataset.size = size;
+      ring.appendChild(el);
+      beadEls[order] = el;
+    }
+    [[1, 159, 8], [2, 150, 5], [3, 143, 5], [4, 136, 5], [5, 127, 8]].forEach(function (p) { add(p[0], 64, p[1], p[2]); });
+    add(6, 64, 114, 9);
+    var gap = 16, span = 360 - 2 * gap;
+    for (var i = 0; i < 54; i++) {
+      var a = (90 + gap + (i + 0.5) * span / 54) * Math.PI / 180;
+      add(7 + i, 64 + 52 * Math.cos(a), 58 + 52 * Math.sin(a), i % 11 === 10 ? 8 : 5);
+    }
+    beadEls[6].style.borderRadius = '50%';
+  })();
+
+  /* tabs and sizes */
+  SETS.forEach(function (x, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = x.label;
+    b.addEventListener('click', function () { S.setIdx = i; save(); render(); });
+    $('tabs').appendChild(b);
+  });
+  SIZES.forEach(function (z, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = z[0];
+    b.addEventListener('click', function () { S.fontIdx = i; save(); render(); });
+    $('sizes').appendChild(b);
+  });
+  $('vibNote').textContent = bridge ? '진동과 화면 켜두기는 이 앱에서 바로 동작해요.' : '브라우저에서는 진동이 안드로이드에서만 동작하고, 아이폰은 지원되지 않아요.';
+
+  /* feedback */
+  function vibrate(pattern) {
+    try {
+      if (bridge && bridge.vibrate) bridge.vibrate(pattern.join(','));
+      else if (navigator.vibrate) navigator.vibrate(pattern);
+    } catch (e) {}
+  }
+  var ac = null;
+  function tone(freq, peak, len) {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!ac) ac = new AC();
+      if (ac.state === 'suspended') ac.resume();
+      var now = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(peak, now + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + len);
+      o.connect(g); g.connect(ac.destination);
+      o.start(now); o.stop(now + len + 0.05);
+    } catch (e) {}
+  }
+  function feedback(to) {
+    var decadeStart = steps[to].k === 'med';
+    if (S.vib) vibrate(decadeStart ? [40, 60, 40] : [15]);
+    if (decadeStart && S.bell) { tone(660, 0.25, 1.4); tone(1320, 0.08, 0.9); tone(1980, 0.03, 0.5); }
+    else if (S.tick) tone(1250, 0.1, 0.07);
+  }
+  /* colors painted behind the phone's status bar (top) and navigation bar (bottom) in the Android app */
+  /* privacy policy: fill PRIVACY_URL with the published web page address; DEV_NAME/DEV_EMAIL are optional */
+  var PRIVACY_URL = '';
+  var DEV_NAME = '';
+  var DEV_EMAIL = '';
+  var PRIVACY_DATE = '2026년 11월 27일';
+  var BAR_COLORS = { privacy: ['#1B2B52', '#F7F3EA'], splash: ['#1B2B52', '#1B2B52'], pray: ['#1B2B52', '#F7F3EA'], history: ['#1B2B52', '#F7F3EA'], profile: ['#1B2B52', '#F7F3EA'], guide: ['#1B2B52', '#F7F3EA'] };
+  var curScreen = 'splash';
+  function setBars(top, bottom) { try { if (bridge && bridge.setBars) bridge.setBars(top, bottom); } catch (e) {} }
+  function screenBars() { var c = BAR_COLORS[curScreen] || BAR_COLORS.splash; setBars(c[0], c[1]); }
+  function openSettings() { $('scrim').classList.add('on'); setBars('#131D3A', '#FFFFFF'); }
+  function closeSettings() { $('scrim').classList.remove('on'); screenBars(); }
+  function keepScreen(on) { try { if (bridge && bridge.keepScreenOn) bridge.keepScreenOn(!!on); } catch (e) {} }
+
+  /* navigation */
+  function show(id) {
+    curScreen = id; screenBars();
+    ['splash', 'pray', 'history', 'profile', 'guide', 'privacy'].forEach(function (s) { $(s).classList.toggle('on', s === id); });
+    keepScreen(id === 'pray' && S.keepOn && !S.done);
+    if (id === 'splash') { renderSplash(); renderProfileButton(); }
+    if (id === 'profile') { renderProfile(); $('frHint').textContent = ''; }
+    if (id === 'history') { var n = new Date(); HM = { y: n.getFullYear(), m: n.getMonth(), sel: dkey(n) }; renderHistory(); }
+  }
+
+  /* ---------- prayer history ---------- */
+  var HKEY = 'rosary.history.v1';
+  var H = {};
+  try { H = JSON.parse(localStorage.getItem(HKEY) || '{}') || {}; } catch (e) { H = {}; }
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function dkey(dt) { return dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate()); }
+  function saveH() { try { localStorage.setItem(HKEY, JSON.stringify(H)); } catch (e) {} }
+  function mark(kind) {
+    var k = dkey(new Date());
+    var r = H[k] || { s: 'part', set: S.setIdx, max: 0, n: 0 };
+    r.set = S.setIdx;
+    if (kind === 'done') { r.s = 'done'; r.n = (r.n || 0) + 1; r.max = TOTAL; r.sets = r.sets || []; if (r.sets.indexOf(S.setIdx) < 0) r.sets.push(S.setIdx); }
+    else if (r.s !== 'done') { r.s = 'part'; r.max = Math.max(r.max || 0, S.step); }
+    if (kind === 'done' && new Date().getHours() < 9) r.am = true;
+    r.t = Date.now();
+    H[k] = r; saveH();
+  }
+  function dayStatus(k) {
+    var r = H[k];
+    if (!r) return '';
+    if (r.s === 'done') return 'done';
+    return k === dkey(new Date()) ? 'prog' : 'part';
+  }
+  function stepDesc(i) {
+    var s = steps[Math.min(i, TOTAL - 1)];
+    if (s.phase === 'intro') return '시작 기도까지';
+    if (s.phase === 'end') return '마침 기도까지';
+    var what = s.k === 'hail' ? '성모송 ' + s.n + '번째' : (P[s.k] ? P[s.k].title : '묵상');
+    return (s.d + 1) + '단 ' + what + '까지';
+  }
+  function streak() {
+    var d = new Date(), c = 0;
+    if (dayStatus(dkey(d)) !== 'done') d.setDate(d.getDate() - 1);
+    while (dayStatus(dkey(d)) === 'done') { c++; d.setDate(d.getDate() - 1); }
+    return c;
+  }
+  var HM = null;
+  function renderHistory() {
+    var now = new Date(), todayK = dkey(now);
+    var y = HM.y, m = HM.m;
+    $('mTitle').textContent = y + '년 ' + (m + 1) + '월';
+    $('mNext').disabled = (y > now.getFullYear()) || (y === now.getFullYear() && m >= now.getMonth());
+    var first = new Date(y, m, 1).getDay();
+    var last = new Date(y, m + 1, 0).getDate();
+    var html = '', cDone = 0, cPart = 0;
+    for (var b = 0; b < first; b++) html += '<span class="day blank"></span>';
+    for (var d = 1; d <= last; d++) {
+      var k = y + '-' + pad2(m + 1) + '-' + pad2(d);
+      var st = dayStatus(k);
+      if (st === 'done') cDone++;
+      if (st === 'part') cPart++;
+      var future = new Date(y, m, d) > now;
+      var cls = 'day' + (st ? ' ' + st : '') + (k === todayK ? ' today' : '') + (k === HM.sel ? ' sel' : '') + (future ? ' future' : '');
+      var label = (m + 1) + '월 ' + d + '일' + (st === 'done' ? ' 완료' : st === 'part' ? ' 중단' : st === 'prog' ? ' 진행 중' : '');
+      var times = H[k] && H[k].n > 1 ? '<span class="x">×' + H[k].n + '</span>' : '';
+      html += '<button type="button" class="' + cls + '" data-k="' + k + '" aria-label="' + label + '"' + (future ? ' disabled' : '') + '><span class="n">' + d + '</span>' + times + '</button>';
+    }
+    $('days').innerHTML = html;
+    $('stDone').textContent = cDone;
+    $('stPart').textContent = cPart;
+    $('stStreak').textContent = streak();
+
+    var sk = HM.sel, r = H[sk], sst = dayStatus(sk);
+    var p = sk.split('-'), sd = new Date(+p[0], +p[1] - 1, +p[2]);
+    var det = '<h3 class="serif">' + (+p[1]) + '월 ' + (+p[2]) + '일 (' + WEEK[sd.getDay()] + ')</h3>';
+    if (!r) {
+      det += '<span class="badge b-none">기록 없음</span><p>이 날은 묵주기도 기록이 없어요.</p>';
+    } else if (sst === 'done') {
+      det += '<span class="badge b-done">완료</span><p>' + SETS[r.set].name + ' 5단을 모두 바쳤어요.' + (r.n > 1 ? '<br>이 날 ' + r.n + '번 바쳤어요.' : '') + '</p>';
+    } else {
+      det += '<span class="badge b-' + sst + '">' + (sst === 'prog' ? '진행 중' : '중단') + '</span><p>' + SETS[r.set].name + ' · ' + stepDesc(r.max) + ' 바쳤어요.<br>(' + (r.max + 1) + ' / ' + TOTAL + '단계)</p>';
+      if (sst === 'prog' && S.step > 0 && !S.done) det += '<button type="button" class="btn-small" id="hResume">이어서 기도하기</button>';
+    }
+    $('detail').innerHTML = det;
+    var hr = $('hResume');
+    if (hr) hr.addEventListener('click', function () { render(); show('pray'); });
+  }
+  $('days').addEventListener('click', function (e) {
+    var b = e.target.closest('.day');
+    if (!b || b.disabled || !b.dataset.k) return;
+    HM.sel = b.dataset.k; renderHistory();
+  });
+  $('mPrev').addEventListener('click', function () { HM.m--; if (HM.m < 0) { HM.m = 11; HM.y--; } renderHistory(); });
+  $('mNext').addEventListener('click', function () { HM.m++; if (HM.m > 11) { HM.m = 0; HM.y++; } renderHistory(); });
+  $('histBtn').addEventListener('click', function () { show('history'); });
+  $('doneHist').addEventListener('click', function () { show('history'); });
+  $('hBack').addEventListener('click', function () { show('splash'); });
+
+  /* ---------- profile & rewards ---------- */
+  function ringPts(n, R, cx, cy, start) {
+    var out = [];
+    for (var i = 0; i < n; i++) {
+      var a = ((start || -90) + i * 360 / n) * Math.PI / 180;
+      out.push([cx + R * Math.cos(a), cy + R * Math.sin(a), i]);
+    }
+    return out;
+  }
+  function starPts(cx, cy, r1, r2, n) {
+    var pts = [];
+    for (var i = 0; i < 2 * n; i++) {
+      var r = i % 2 ? r2 : r1, a = (-90 + i * 180 / n) * Math.PI / 180;
+      pts.push((cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1));
+    }
+    return pts.join(' ');
+  }
+  var AVATARS = {
+    rosary: { name: '묵주', bg: '#1B2B52', draw: function () {
+      var s = '<circle cx="50" cy="50" r="27" fill="none" stroke="#D8B45C" stroke-opacity=".45" stroke-width="1"/>';
+      ringPts(25, 27, 50, 50).forEach(function (p) { s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (p[2] % 5 === 0 ? 2.8 : 1.8) + '" fill="#D8B45C"/>'; });
+      return s + '<path d="M47 32 H53 V43 H63 V49 H53 V70 H47 V49 H37 V43 H47 Z" fill="#D8B45C"/>';
+    } },
+    dove: { name: '비둘기', bg: '#DCE8F2', draw: function () {
+      return '<g transform="translate(-48 -12) scale(0.6)" stroke="#3E6B8F" stroke-width="3.5" stroke-linejoin="round">' +
+        '<path d="M150 112 C140 86 128 72 112 62 C140 64 166 82 178 108 Z" fill="#fff"/>' +
+        '<ellipse cx="162" cy="118" rx="36" ry="13" fill="#fff"/><circle cx="200" cy="110" r="10" fill="#fff"/>' +
+        '<path d="M209 108 L220 112 L209 115 Z" fill="#C9A24A" stroke="none"/>' +
+        '<path d="M128 116 L104 104 L108 128 Z" fill="#fff"/>' +
+        '<path d="M158 116 C170 96 190 86 212 84 C200 100 186 112 172 120 Z" fill="#fff"/></g>' +
+        '<path d="M22 78 Q30 72 38 78 T54 78 T70 78 T86 78" fill="none" stroke="#3E6B8F" stroke-width="2.5" stroke-linecap="round"/>';
+    } },
+    lily: { name: '백합', bg: '#F4E7C8', draw: function () {
+      return '<path d="M50 56 V84" stroke="#5E8452" stroke-width="3" stroke-linecap="round"/>' +
+        '<ellipse cx="41" cy="74" rx="4" ry="9" fill="#6E9A5E" transform="rotate(-40 41 74)"/>' +
+        '<ellipse cx="59" cy="76" rx="4" ry="9" fill="#6E9A5E" transform="rotate(40 59 76)"/>' +
+        '<ellipse cx="50" cy="56" rx="8" ry="20" fill="#fff" stroke="#C9A24A" stroke-width="1.5" transform="rotate(-38 50 58)"/>' +
+        '<ellipse cx="50" cy="56" rx="8" ry="20" fill="#fff" stroke="#C9A24A" stroke-width="1.5" transform="rotate(38 50 58)"/>' +
+        '<ellipse cx="50" cy="42" rx="8" ry="19" fill="#fff" stroke="#C9A24A" stroke-width="1.5"/>' +
+        '<circle cx="50" cy="52" r="2.5" fill="#D8B45C"/>';
+    } },
+    marian: { name: '성모', bg: '#2F5D8C', draw: function () {
+      return '<path d="M48.5 16 H51.5 V21 H56 V24 H51.5 V31 H48.5 V24 H44 V21 H48.5 Z" fill="#F2D27A"/>' +
+        '<path d="M26 74 V40 L50 64 L74 40 V74" fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>' +
+        '<path d="M20 82 H80" stroke="#F2D27A" stroke-width="2" stroke-linecap="round"/>';
+    } },
+    rose: { name: '장미', bg: '#F7E6E4', draw: function () {
+      return '<path d="M50 60 V86" stroke="#4F7A45" stroke-width="3" stroke-linecap="round"/>' +
+        '<ellipse cx="40" cy="74" rx="4.5" ry="9" fill="#5E8C52" transform="rotate(-45 40 74)"/>' +
+        '<ellipse cx="60" cy="70" rx="4.5" ry="9" fill="#5E8C52" transform="rotate(45 60 70)"/>' +
+        '<circle cx="50" cy="44" r="19" fill="#C0394B"/>' +
+        '<path d="M50 44 m-4 0 a4 4 0 1 1 8 0 a8 8 0 1 1 -16 0 a12 12 0 1 1 24 0" fill="none" stroke="#7E1F2E" stroke-width="2.2" stroke-linecap="round"/>';
+    } },
+    candle: { name: '촛불', bg: '#3B2440', draw: function () {
+      return '<circle cx="50" cy="32" r="16" fill="#F2D27A" fill-opacity=".18"/>' +
+        '<path d="M50 18 C56 26 57 32 50 40 C43 32 44 26 50 18 Z" fill="#F2D27A"/>' +
+        '<path d="M50 27 C52.5 31 52.5 34 50 37 C47.5 34 47.5 31 50 27 Z" fill="#fff"/>' +
+        '<rect x="41" y="44" width="18" height="38" rx="2" fill="#F4E7C8"/>' +
+        '<path d="M50 40 V44" stroke="#2B2618" stroke-width="1.5"/><rect x="33" y="80" width="34" height="5" rx="2" fill="#C9A24A"/>';
+    } },
+    star: { name: '별', bg: '#16244A', draw: function () {
+      var s = '<polygon points="' + starPts(50, 50, 30, 11, 8) + '" fill="#D8B45C"/>';
+      [[20, 24], [80, 22], [22, 78], [82, 76]].forEach(function (p) { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="1.6" fill="#F2D27A"/>'; });
+      return s;
+    } },
+    heart: { name: '성모 성심', bg: '#FBEFEA', draw: function () {
+      var s = '<path d="M50 82 C30 68 19 56 19 43 C19 33 27 27 35.5 27 C42.5 27 47.5 31 50 36 C52.5 31 57.5 27 64.5 27 C73 27 81 33 81 43 C81 56 70 68 50 82 Z" fill="#C0394B"/>';
+      s += '<path d="M50 12 C56 19 57 24 50 31 C43 24 44 19 50 12 Z" fill="#D8B45C"/>';
+      ringPts(7, 13, 50, 50, -90).forEach(function (p) { s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + (p[1] + 3).toFixed(1) + '" r="2.6" fill="#FFF4F0"/>'; });
+      return s + '<circle cx="50" cy="53" r="3.2" fill="#F2D27A"/>';
+    } },
+    crown: { name: '모후의 관', bg: '#14203F', draw: function () {
+      var s = '<path d="M25 66 L21 36 L37 49 L50 26 L63 49 L79 36 L75 66 Z" fill="#D8B45C" stroke="#F2D27A" stroke-width="1.2" stroke-linejoin="round"/>';
+      s += '<rect x="24" y="64" width="52" height="9" rx="2" fill="#C9A24A"/>';
+      [[21, 35], [50, 25], [79, 35]].forEach(function (p) { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="3.4" fill="#F7F3EA"/>'; });
+      [[36, 68.5, '#2F5D8C'], [50, 68.5, '#C0394B'], [64, 68.5, '#2F5D8C']].forEach(function (p) { s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.6" fill="' + p[2] + '"/>'; });
+      [[22, 18], [78, 18], [50, 10]].forEach(function (p) { s += '<polygon points="' + starPts(p[0], p[1], 4, 1.7, 5) + '" fill="#F2D27A"/>'; });
+      return s;
+    } },
+    chalice: { name: '성작', bg: '#6B2737', draw: function () {
+      return '<circle cx="50" cy="26" r="10" fill="#fff"/><path d="M47.5 21 H52.5 M50 18.5 V23.5" stroke="#C9A24A" stroke-width="1.6"/>' +
+        '<path d="M32 40 H68 C68 56 60 63 50 63 C40 63 32 56 32 40 Z" fill="#D8B45C"/>' +
+        '<rect x="47" y="62" width="6" height="12" fill="#D8B45C"/><ellipse cx="50" cy="77" rx="15" ry="4.5" fill="#D8B45C"/>' +
+        '<path d="M32 40 H68" stroke="#F2D27A" stroke-width="2"/>';
+    } }
+  };
+  function avatarSvg(id) {
+    var a = AVATARS[id] || AVATARS.rosary;
+    return '<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><circle cx="50" cy="50" r="50" fill="' + a.bg + '"/>' + a.draw() + '</svg>';
+  }
+  var FRAMES = {
+    none: { name: '테두리 없음' },
+    silver: { name: '은빛 묵주' },
+    gold: { name: '금빛 묵주' },
+    roses: { name: '장미 화관' },
+    stars: { name: '열두 별의 관' },
+    lilies: { name: '백합 화관' },
+    glory: { name: '영광의 빛' }
+  };
+  function frameSvg(id) {
+    if (!id || id === 'none') return '';
+    var s = '<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true" style="position:absolute;inset:0;overflow:visible">';
+    if (id === 'silver' || id === 'gold') {
+      var c1 = id === 'gold' ? '#D8B45C' : '#AEB5C1', c2 = id === 'gold' ? '#F2D27A' : '#E3E7EE';
+      s += '<circle cx="60" cy="60" r="54.5" fill="none" stroke="' + c1 + '" stroke-width="1"/>';
+      ringPts(30, 54.5, 60, 60).forEach(function (p) {
+        var big = p[2] % 6 === 0;
+        s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="' + (big ? 4.4 : 3) + '" fill="' + (big ? c2 : c1) + '" stroke="' + c1 + '" stroke-width=".6"/>';
+      });
+      s += '<path d="M57.5 108 H62.5 V112 H66 V115.5 H62.5 V122 H57.5 V115.5 H54 V112 H57.5 Z" fill="' + c1 + '"/>';
+    } else if (id === 'roses') {
+      ringPts(14, 54.5, 60, 60).forEach(function (p) {
+        var a = (-90 + p[2] * 360 / 14 + 360 / 28) * Math.PI / 180;
+        var lx = 60 + 54.5 * Math.cos(a), ly = 60 + 54.5 * Math.sin(a), deg = (-90 + p[2] * 360 / 14 + 360 / 28) + 90;
+        s += '<ellipse cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) + '" rx="2.4" ry="5" fill="#5E8C52" transform="rotate(' + deg.toFixed(0) + ' ' + lx.toFixed(1) + ' ' + ly.toFixed(1) + ')"/>';
+        s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="5.2" fill="' + (p[2] % 2 ? '#E06A7A' : '#C0394B') + '"/>';
+        s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2" fill="#7E1F2E" fill-opacity=".55"/>';
+      });
+    } else if (id === 'lilies') {
+      s += '<circle cx="60" cy="60" r="54.5" fill="none" stroke="#6E9A5E" stroke-width="1.4"/>';
+      ringPts(16, 54.5, 60, 60).forEach(function (p) {
+        var deg = -90 + p[2] * 360 / 16 + 90, x = p[0].toFixed(1), y = p[1].toFixed(1);
+        [-42, 0, 42].forEach(function (o) {
+          s += '<ellipse cx="' + x + '" cy="' + (p[1] - 3.6).toFixed(1) + '" rx="2" ry="4.4" fill="#FFFFFF" stroke="#C9A24A" stroke-width=".5" transform="rotate(' + (deg + o).toFixed(0) + ' ' + x + ' ' + y + ')"/>';
+        });
+        s += '<circle cx="' + x + '" cy="' + y + '" r="1.4" fill="#D8B45C"/>';
+      });
+    } else if (id === 'glory') {
+      for (var i = 0; i < 48; i++) {
+        var a = (-90 + i * 7.5) * Math.PI / 180, w = 1.6 * Math.PI / 180, r0 = 49, r1 = i % 2 ? 57 : 63;
+        var x0 = 60 + r0 * Math.cos(a - w), y0 = 60 + r0 * Math.sin(a - w), x1 = 60 + r0 * Math.cos(a + w), y1 = 60 + r0 * Math.sin(a + w), xt = 60 + r1 * Math.cos(a), yt = 60 + r1 * Math.sin(a);
+        s += '<polygon points="' + x0.toFixed(1) + ',' + y0.toFixed(1) + ' ' + xt.toFixed(1) + ',' + yt.toFixed(1) + ' ' + x1.toFixed(1) + ',' + y1.toFixed(1) + '" fill="' + (i % 2 ? '#F2D27A' : '#D8B45C') + '"/>';
+      }
+      s += '<circle cx="60" cy="60" r="49.5" fill="none" stroke="#F2D27A" stroke-width="2.2"/>';
+      ringPts(12, 49.5, 60, 60).forEach(function (p) { s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.2" fill="#FFFFFF"/>'; });
+    } else if (id === 'stars') {
+      s += '<circle cx="60" cy="60" r="54.5" fill="none" stroke="#D8B45C" stroke-width="1.2"/>';
+      ringPts(12, 55, 60, 60).forEach(function (p) {
+        s += '<polygon points="' + starPts(p[0], p[1], 6.5, 2.7, 5) + '" fill="#F2D27A" stroke="#C9A24A" stroke-width=".6"/>';
+      });
+    }
+    return s + '</svg>';
+  }
+
+  var PKEY = 'rosary.photo.v1';
+  var photo = '';
+  try { photo = localStorage.getItem(PKEY) || ''; } catch (e) {}
+  if (!S.profile || typeof S.profile !== 'object') S.profile = { name: '', av: 'rosary', frame: 'none' };
+
+  function avatarHtml(px, avId, frameId) {
+    avId = avId || S.profile.av; frameId = frameId === undefined ? S.profile.frame : frameId;
+    var inner = Math.round(px * 0.8), off = Math.round((px - inner) / 2);
+    var face = (avId === 'photo' && photo)
+      ? '<img src="' + photo + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block">'
+      : avatarSvg(avId === 'photo' ? 'rosary' : avId);
+    return '<span class="av" style="width:' + px + 'px;height:' + px + 'px"><span class="face" style="left:' + off + 'px;top:' + off + 'px;width:' + inner + 'px;height:' + inner + 'px">' + face + '</span>' + frameSvg(frameId) + '</span>';
+  }
+
+  /* stats from history */
+  function stats() {
+    var keys = Object.keys(H).filter(function (k) { return H[k] && H[k].s === 'done'; }).sort();
+    var total = 0, sets = {}, best = 0, run = 0, prev = null, octo = {}, may = {}, months = {}, morning = 0;
+    keys.forEach(function (k) {
+      var r = H[k];
+      total += r.n || 1;
+      (r.sets || [r.set]).forEach(function (x) { sets[x] = 1; });
+      if (r.am) morning = 1;
+      var p = k.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
+      if (prev && Math.round((d - prev) / 86400000) === 1) run++; else run = 1;
+      if (run > best) best = run;
+      prev = d;
+      if (+p[1] === 10) octo[p[0]] = (octo[p[0]] || 0) + 1;
+      if (+p[1] === 5) may[p[0]] = (may[p[0]] || 0) + 1;
+      months[p[0] + '-' + p[1]] = (months[p[0] + '-' + p[1]] || 0) + (r.n || 1);
+    });
+    var octoBest = 0;
+    for (var y in octo) if (octo[y] > octoBest) octoBest = octo[y];
+    var mayBest = 0, monthBest = 0;
+    for (var y2 in may) if (may[y2] > mayBest) mayBest = may[y2];
+    for (var m in months) if (months[m] > monthBest) monthBest = months[m];
+    return { total: total, best: best, cur: streak(), sets: Object.keys(sets).length, octo: octoBest, may: mayBest, monthBest: monthBest,
+      days: keys.length, hails: total * 53, light: sets[1] ? 1 : 0, morning: morning, hidHails: S.hidHails || 0 };
+  }
+  /* top-tier thresholds (completions within one calendar month) */
+  var TOP_MONTH_1 = 40, TOP_MONTH_2 = 60;
+  var REWARDS = [
+    { id: 'first', name: '첫 걸음', desc: '묵주기도 5단을 처음으로 마치기', unit: '회', target: 1, val: function (s) { return s.total; }, gives: { av: 'rose' } },
+    { id: 'streak3', name: '사흘의 정성', desc: '3일 연속으로 완료하기', unit: '일', target: 3, val: function (s) { return s.best; }, gives: { frame: 'silver' } },
+    { id: 'streak7', name: '한 주의 기도', desc: '7일 연속으로 완료하기', unit: '일', target: 7, val: function (s) { return s.best; }, gives: { frame: 'gold' } },
+    { id: 'four', name: '네 가지 신비', desc: '환희·빛·고통·영광을 모두 바치기', unit: '가지', target: 4, val: function (s) { return s.sets; }, gives: { av: 'candle' } },
+    { id: 'ten', name: '열 송이 장미', desc: '묵주기도를 10번 완료하기', unit: '회', target: 10, val: function (s) { return s.total; }, gives: { av: 'star' } },
+    { id: 'october', name: '묵주기도 성월', desc: '10월에 20일 이상 완료하기', unit: '일', target: 20, val: function (s) { return s.octo; }, gives: { av: 'chalice' } },
+    { id: 'streak30', name: '한 달의 기도', desc: '30일 연속으로 완료하기', unit: '일', target: 30, val: function (s) { return s.best; }, gives: { frame: 'roses' } },
+    { id: 'hundred', name: '백 송이 장미', desc: '묵주기도를 100번 완료하기', unit: '회', target: 100, val: function (s) { return s.total; }, gives: { frame: 'stars' } },
+    { id: 'may', name: '성모 성월', desc: '5월에 20일 이상 완료하기', unit: '일', target: 20, val: function (s) { return s.may; }, gives: { av: 'heart' } },
+    { id: 'hundredDays', name: '백일 기도', desc: '100일 연속으로 완료하기', unit: '일', target: 100, val: function (s) { return s.best; }, gives: { frame: 'lilies' } },
+    { id: 'topMonth', top: true, name: '이달의 장미', desc: '한 달 동안 40번 이상 완료하기', unit: '회', target: TOP_MONTH_1, val: function (s) { return s.monthBest; }, gives: { av: 'crown' } },
+    { id: 'topQueen', top: true, name: '로사리오의 모후', desc: '한 달 동안 60번 이상 완료하기', unit: '회', target: TOP_MONTH_2, val: function (s) { return s.monthBest; }, gives: { frame: 'glory' } }
+  ];
+  /* challenges: skins & advance effects, earned by using the app */
+  var CHALLENGES = [
+    { id: 'c_hide', name: '눈을 감고 기도', desc: '기도문을 숨기고 성모송 10번 바치기', unit: '번', target: 10, val: function (s) { return s.hidHails; }, gives: { fx: 'ripple' } },
+    { id: 'c_three', name: '세 송이 꽃다발', desc: '묵주기도를 3번 완료하기', unit: '회', target: 3, val: function (s) { return s.total; }, gives: { skin: 'pearl' } },
+    { id: 'c_light', name: '빛의 길', desc: '빛의 신비로 5단을 마치기', unit: '회', target: 1, val: function (s) { return s.light; }, gives: { fx: 'sparkle' } },
+    { id: 'c_morning', name: '아침을 여는 기도', desc: '오전 9시 전에 묵주기도 마치기', unit: '회', target: 1, val: function (s) { return s.morning; }, gives: { skin: 'wood' } },
+    { id: 'c_days5', name: '닷새의 기도', desc: '서로 다른 5일 동안 완료하기', unit: '일', target: 5, val: function (s) { return s.days; }, gives: { skin: 'rose' } },
+    { id: 'c_hails', name: '천 번의 성모송', desc: '성모송을 모두 1,000번 바치기', unit: '번', target: 1000, val: function (s) { return s.hails; }, gives: { fx: 'rays' } },
+    { id: 'c_days15', name: '보름의 기도', desc: '서로 다른 15일 동안 완료하기', unit: '일', target: 15, val: function (s) { return s.days; }, gives: { skin: 'lapis' } }
+  ];
+  var ALL_REWARDS = REWARDS.concat(CHALLENGES);
+  var FREE_SKIN = ['gold'], FREE_FX = ['none', 'soft'];
+  var FX_NAMES = { none: '효과 없음', soft: '은은한 빛', ripple: '빛 물결', sparkle: '반짝임', rays: '후광' };
+  var SKIN_NAMES = { gold: '금빛', pearl: '진주', wood: '원목', rose: '장미', lapis: '청금석' };
+  var SKIN_SW = { gold: ['#D8B45C', '#E9E1CC', '242,210,122'], pearl: ['#F1ECE2', 'rgba(240,236,228,.45)', '190,214,255'], wood: ['#A8703F', 'rgba(168,112,63,.55)', '255,190,110'], rose: ['#D2566A', 'rgba(224,106,122,.45)', '255,150,170'], lapis: ['#3F6FD8', 'rgba(96,136,224,.45)', '150,190,255'] };
+  function skinOpen(id, u) { return FREE_SKIN.indexOf(id) >= 0 || CHALLENGES.some(function (r) { return r.gives.skin === id && u[r.id]; }); }
+  function fxOpen(id, u) { return FREE_FX.indexOf(id) >= 0 || CHALLENGES.some(function (r) { return r.gives.fx === id && u[r.id]; }); }
+  function josa(w, a, b) {
+    var c = w.charCodeAt(w.length - 1);
+    if (c < 0xAC00 || c > 0xD7A3) return w + a;
+    return w + (((c - 0xAC00) % 28) ? a : b);
+  }
+  function giveLabel(g) {
+    if (g.av) return AVATARS[g.av].name + ' 프로필 사진';
+    if (g.frame) return FRAMES[g.frame].name + ' 테두리';
+    if (g.skin) return SKIN_NAMES[g.skin] + ' 묵주 스킨';
+    return FX_NAMES[g.fx] + ' 넘김 효과';
+  }
+  function itemPreview(g, px) {
+    if (g.av || g.frame) return g.av ? avatarHtml(px, g.av, 'none') : avatarHtml(px, 'rosary', g.frame);
+    var svg = '<svg viewBox="0 0 56 56" width="' + px + '" height="' + px + '" aria-hidden="true"><rect width="56" height="56" rx="14" fill="#1B2B52"/>';
+    if (g.skin) {
+      var c = SKIN_SW[g.skin];
+      svg += '<path d="M2 36 Q28 22 54 36" fill="none" stroke="rgba(' + c[2] + ',.45)" stroke-width="1.2"/>';
+      [[9, 33, 5, c[0]], [19, 29.5, 5, c[0]], [37, 29.5, 5, c[1]], [47, 33, 5, c[1]]].forEach(function (b) { svg += '<circle cx="' + b[0] + '" cy="' + b[1] + '" r="' + b[2] + '" fill="' + b[3] + '"/>'; });
+      svg += '<circle cx="28" cy="28" r="7.5" fill="#fff" stroke="rgb(' + c[2] + ')" stroke-width="2"/><circle cx="28" cy="28" r="12" fill="rgba(' + c[2] + ',.2)"/>';
+    } else {
+      var gl = '242,210,122';
+      if (g.fx === 'ripple') svg += '<circle cx="28" cy="28" r="12" fill="none" stroke="rgba(' + gl + ',.9)" stroke-width="1.6"/><circle cx="28" cy="28" r="19" fill="none" stroke="rgba(' + gl + ',.5)" stroke-width="1.4"/>';
+      if (g.fx === 'sparkle') for (var i = 0; i < 8; i++) { var a = i * 45 * Math.PI / 180, r = i % 2 ? 15 : 20; svg += '<rect x="' + (28 + r * Math.cos(a) - 2.2).toFixed(1) + '" y="' + (28 + r * Math.sin(a) - 2.2).toFixed(1) + '" width="4.4" height="4.4" fill="rgb(' + gl + ')" transform="rotate(45 ' + (28 + r * Math.cos(a)).toFixed(1) + ' ' + (28 + r * Math.sin(a)).toFixed(1) + ')"/>'; }
+      if (g.fx === 'rays') for (var j = 0; j < 12; j++) { var b2 = j * 30 * Math.PI / 180; svg += '<line x1="' + (28 + 10 * Math.cos(b2)).toFixed(1) + '" y1="' + (28 + 10 * Math.sin(b2)).toFixed(1) + '" x2="' + (28 + 22 * Math.cos(b2)).toFixed(1) + '" y2="' + (28 + 22 * Math.sin(b2)).toFixed(1) + '" stroke="rgba(' + gl + ',.85)" stroke-width="2" stroke-linecap="round"/>'; }
+      svg += '<circle cx="28" cy="28" r="7" fill="#fff" stroke="rgb(' + gl + ')" stroke-width="2"/>';
+    }
+    return svg + '</svg>';
+  }
+  var FREE_AV = ['rosary', 'dove', 'lily', 'marian'];
+  function unlocked() {
+    var st = stats(), out = {};
+    ALL_REWARDS.forEach(function (r) { if (r.val(st) >= r.target) out[r.id] = true; });
+    return out;
+  }
+  function avOpen(id, u) {
+    if (FREE_AV.indexOf(id) >= 0 || id === 'photo') return true;
+    return REWARDS.some(function (r) { return r.gives.av === id && u[r.id]; });
+  }
+  function frameOpen(id, u) {
+    if (id === 'none') return true;
+    return REWARDS.some(function (r) { return r.gives.frame === id && u[r.id]; });
+  }
+  function rewardFor(kind, id) { return ALL_REWARDS.filter(function (r) { return r.gives[kind] === id; })[0]; }
+  function rewardPreview(r, px) { return itemPreview(r.gives, px); }
+  if (!Array.isArray(S.seen)) { var u0 = unlocked(); S.seen = Object.keys(u0); }
+
+  function collectFresh() {
+    var u = unlocked(), fresh = [];
+    ALL_REWARDS.forEach(function (r) { if (u[r.id] && S.seen.indexOf(r.id) < 0) { fresh.push(r); S.seen.push(r.id); } });
+    fresh.forEach(function (r) {
+      if (r.gives.frame) S.profile.frame = r.gives.frame;
+      if (r.gives.skin) { S.skin = r.gives.skin; if (typeof applySkin === 'function') applySkin(); }
+      if (r.gives.fx) S.fx = r.gives.fx;
+    });
+    if (fresh.length) save();
+    return fresh;
+  }
+  var toastT = null;
+  function checkMidUnlocks() {
+    var fresh = collectFresh();
+    if (!fresh.length) return;
+    var r = fresh[0];
+    $('toast').innerHTML = itemPreview(r.gives, 44) + '<div><b>도전과제 달성 · ' + r.name + '</b><span>' + josa(giveLabel(r.gives), '을', '를') + ' 얻었어요. 바로 적용했어요.</span></div>';
+    $('toast').classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { $('toast').classList.remove('on'); }, 4200);
+    vibrate([30, 60, 30, 60, 30]);
+  }
+  function checkNewRewards() {
+    var fresh = collectFresh();
+    var box = $('newReward');
+    if (!fresh.length) { box.style.display = 'none'; return; }
+    var html = '<p class="nr-title">새로 얻었어요</p>';
+    fresh.forEach(function (r) {
+      var isCh = r.id.indexOf('c_') === 0;
+      html += '<div class="nr-item">' + rewardPreview(r, 52) + '<div><b>' + r.name + (r.top ? ' <span class="toptag">최상위</span>' : '') + (isCh ? ' <span class="chtag">도전과제</span>' : '') + '</b><span>' + giveLabel(r.gives) + (r.gives.skin || r.gives.fx ? ' · 바로 적용됨' : '') + '</span></div></div>';
+    });
+    html += '<button type="button" class="btn-small" id="nrGo">프로필에서 보기</button>';
+    box.innerHTML = html;
+    box.style.display = 'flex';
+    $('nrGo').addEventListener('click', function () { show('profile'); });
+  }
+
+  function renderProfileButton() {
+    var nm = (S.profile.name || '').trim();
+    var esc = nm.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    $('profBtn').innerHTML = avatarHtml(52) + '<span class="pn' + (nm ? '' : ' empty') + '">' + (nm ? esc : '이름 입력') + '</span>';
+    $('greet').textContent = nm ? nm + '님, 평화를 빕니다' : '';
+    $('greet').style.display = nm ? 'block' : 'none';
+  }
+
+  function renderProfile() {
+    var st = stats(), u = unlocked();
+    $('pAv').innerHTML = avatarHtml(132);
+    if (document.activeElement !== $('pName')) $('pName').value = S.profile.name || '';
+    $('psTotal').textContent = st.total;
+    $('psBest').textContent = st.best;
+    $('psCur').textContent = st.cur;
+
+    var order = ['rosary', 'dove', 'lily', 'marian', 'rose', 'candle', 'star', 'chalice', 'heart', 'crown'];
+    var html = '';
+    order.forEach(function (id) {
+      var open = avOpen(id, u), sel = S.profile.av === id;
+      html += '<button type="button" class="avopt' + (sel ? ' sel' : '') + (open ? '' : ' locked') + '" data-av="' + id + '" aria-pressed="' + sel + '" aria-label="' + AVATARS[id].name + (open ? '' : ' (잠김)') + '">' + avatarHtml(64, id, 'none') + (open ? '' : LOCK) + '<span class="cap">' + AVATARS[id].name + '</span></button>';
+    });
+    if (photo) {
+      var ps = S.profile.av === 'photo';
+      html += '<button type="button" class="avopt' + (ps ? ' sel' : '') + '" data-av="photo" aria-pressed="' + ps + '" aria-label="내 사진">' + avatarHtml(64, 'photo', 'none') + '<span class="cap">내 사진</span></button>';
+    }
+    html += '<button type="button" class="avopt up" id="upBtn" aria-label="내 사진 올리기"><span class="upic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span><span class="cap">' + (photo ? '사진 바꾸기' : '내 사진') + '</span></button>';
+    $('avGrid').innerHTML = html;
+
+    var fh = '';
+    ['none', 'silver', 'gold', 'roses', 'stars', 'lilies', 'glory'].forEach(function (id) {
+      var open = frameOpen(id, u), sel = (S.profile.frame || 'none') === id;
+      fh += '<button type="button" class="fropt' + (sel ? ' sel' : '') + (open ? '' : ' locked') + '" data-fr="' + id + '" aria-pressed="' + sel + '" aria-label="' + FRAMES[id].name + (open ? '' : ' (잠김)') + '">' + avatarHtml(64, S.profile.av, id) + (open ? '' : LOCK) + '<span class="cap">' + FRAMES[id].name + '</span></button>';
+    });
+    $('frGrid').innerHTML = fh;
+
+    var rh = '';
+    REWARDS.forEach(function (r, ri) {
+      var v = Math.min(r.val(st), r.target), got = !!u[r.id];
+      rh += '<div class="rw' + (got ? ' got' : '') + (r.top ? ' top' : '') + '"><div class="rwpv">' + rewardPreview(r, 56) + '</div><div class="rwtx"><b><span class="rwno">' + (ri + 1) + '</span>' + r.name + (r.top ? '<span class="toptag">최상위</span>' : '') + '</b><span>' + r.desc + '</span>' +
+        '<div class="rwbar"><i style="width:' + Math.round(v / r.target * 100) + '%"></i></div><em>' + (got ? '획득 · ' + giveLabel(r.gives) : v.toLocaleString() + ' / ' + r.target.toLocaleString() + r.unit) + '</em></div></div>';
+    });
+    $('rwGrid').innerHTML = rh;
+    var ch = '', doneCnt = 0;
+    CHALLENGES.forEach(function (r) {
+      var v = Math.min(r.val(st), r.target), got = !!u[r.id];
+      if (got) doneCnt++;
+      ch += '<div class="rw ch' + (got ? ' got' : '') + '"><div class="rwpv">' + rewardPreview(r, 56) + '</div><div class="rwtx"><b>' + r.name + '</b><span>' + r.desc + '</span>' +
+        '<div class="rwbar"><i style="width:' + Math.round(v / r.target * 100) + '%"></i></div><em>' + (got ? '달성 · ' + giveLabel(r.gives) : v.toLocaleString() + ' / ' + r.target.toLocaleString() + r.unit + ' · ' + giveLabel(r.gives)) + '</em></div></div>';
+    });
+    $('chGrid').innerHTML = ch;
+    $('chCount').textContent = doneCnt + ' / ' + CHALLENGES.length;
+    if (typeof renderSkinUI === 'function') renderSkinUI();
+    $('avHint').textContent = '';
+  }
+  var LOCK = '<span class="lock"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>';
+
+  $('avGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    if (b.id === 'upBtn') { $('photoIn').click(); return; }
+    var id = b.dataset.av;
+    if (!avOpen(id, unlocked())) {
+      var r = rewardFor('av', id);
+      $('avHint').textContent = '‘' + r.name + '’ 리워드를 얻으면 쓸 수 있어요 · ' + r.desc;
+      return;
+    }
+    S.profile.av = id; save(); renderProfile(); renderProfileButton();
+  });
+  $('frGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    var id = b.dataset.fr;
+    if (!frameOpen(id, unlocked())) {
+      var r = rewardFor('frame', id);
+      $('frHint').textContent = '‘' + r.name + '’ 리워드를 얻으면 쓸 수 있어요 · ' + r.desc;
+      return;
+    }
+    $('frHint').textContent = '';
+    S.profile.frame = id; save(); renderProfile(); renderProfileButton();
+  });
+  $('pName').addEventListener('input', function () { S.profile.name = $('pName').value.slice(0, 20); save(); renderProfileButton(); });
+  $('photoIn').addEventListener('change', function () {
+    var f = $('photoIn').files && $('photoIn').files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var n = 320, c = document.createElement('canvas');
+        c.width = n; c.height = n;
+        var side = Math.min(img.width, img.height);
+        c.getContext('2d').drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, n, n);
+        photo = c.toDataURL('image/jpeg', 0.85);
+        try { localStorage.setItem(PKEY, photo); } catch (e) {}
+        S.profile.av = 'photo'; save(); renderProfile(); renderProfileButton();
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+    $('photoIn').value = '';
+  });
+  $('profBtn').addEventListener('click', function () { show('profile'); });
+  $('helpBtn').addEventListener('click', function () { show('guide'); $('guide').querySelector('.hbody').scrollTop = 0; });
+  $('gBack').addEventListener('click', function () { show('splash'); });
+  var pvReturn = 'splash';
+  function esc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function renderPrivacy() {
+    var contact = (DEV_NAME || DEV_EMAIL)
+      ? '<ul>' + (DEV_NAME ? '<li>개발자: ' + esc(DEV_NAME) + '</li>' : '') + (DEV_EMAIL ? '<li>이메일: ' + esc(DEV_EMAIL) + '</li>' : '') + '</ul>'
+      : '<p>Google Play 스토어의 이 앱 페이지에 있는 개발자 연락처로 문의해 주세요.</p>';
+    $('pvBody').innerHTML =
+      '<p class="pvdate">시행일: ' + PRIVACY_DATE + '</p>' +
+      '<h3>1. 수집하는 개인정보</h3><p>이 앱은 사용자의 개인정보를 수집하거나 외부 서버로 전송하지 않습니다. 회원가입·로그인이 없고, 인터넷에 연결하지 않으며, 광고나 분석 도구를 사용하지 않습니다.</p>' +
+      '<h3>2. 휴대폰 안에만 저장되는 정보</h3><p>앱을 쓰는 동안 아래 정보가 사용자의 휴대폰 안에만 저장됩니다.</p><ul><li>기도 진행 위치와 기도 기록(날짜별 완료·중단 여부)</li><li>앱 설정(진동, 소리, 글자 크기, 요일별 신비, 스킨 등)</li><li>사용자가 입력한 세례명 또는 이름</li><li>사용자가 고른 프로필 사진(고른 사진 한 장만 작게 줄여 저장)</li></ul><p>이 정보는 개발자를 포함한 누구에게도 전송되거나 공유되지 않습니다.</p>' +
+      '<h3>3. 사용하는 권한</h3><ul><li>진동: 구슬을 넘길 때 진동으로 알려 주기 위해 사용합니다.</li><li>사진 선택: 프로필 사진을 고를 때만 사용자가 직접 고른 사진에 접근합니다.</li></ul>' +
+      '<h3>4. 제3자 제공</h3><p>수집하는 정보가 없으므로 제3자에게 제공하는 정보도 없습니다.</p>' +
+      '<h3>5. 정보 삭제 방법</h3><p>휴대폰의 설정 › 애플리케이션 › 묵주기도 › 저장공간 › 데이터 삭제를 누르거나 앱을 삭제하면 모든 정보가 지워집니다.</p>' +
+      '<h3>6. 아동의 개인정보</h3><p>이 앱은 어떤 사용자의 개인정보도 수집하지 않습니다.</p>' +
+      '<h3>7. 문의처</h3>' + contact +
+      '<h3>8. 변경 안내</h3><p>이 방침이 바뀌면 앱과 웹페이지에 시행일과 함께 공지합니다.</p>' +
+      (PRIVACY_URL ? '<a class="pvweb" href="' + esc(PRIVACY_URL) + '" target="_blank" rel="noopener">웹페이지에서 보기 ›</a>' : '');
+  }
+  function openPrivacy(from) { pvReturn = from; renderPrivacy(); show('privacy'); $('pvBody').scrollTop = 0; }
+  $('pvFromSet').addEventListener('click', function () { var from = curScreen; closeSettings(); openPrivacy(from); });
+  $('pvFromGuide').addEventListener('click', function () { openPrivacy('guide'); });
+  $('pvBack').addEventListener('click', function () { show(pvReturn); });
+  $('gStart').addEventListener('click', function () { show('splash'); });
+  $('pBack').addEventListener('click', function () { show('splash'); });
+  $('hProfile').addEventListener('click', function () { show('profile'); });
+
+  SETS.forEach(function (x, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = '<span>' + x.label + '</span><small></small>';
+    b.addEventListener('click', function () {
+      S.pick = i; S.pickDay = dayKey;
+      if (S.step === 0 || S.done) S.setIdx = i;
+      save(); renderSplash();
+    });
+    $('pick').appendChild(b);
+  });
+  function renderDayMap() {
+    var order = [1, 2, 3, 4, 5, 6, 0], html = '';
+    order.forEach(function (w) {
+      html += '<div class="dmrow"><span' + (w === 0 ? ' class="sun"' : '') + '>' + WEEK[w] + '</span><div class="seg4" role="group" aria-label="' + WEEK[w] + '요일 신비">';
+      SETS.forEach(function (x, i) {
+        html += '<button type="button" data-w="' + w + '" data-i="' + i + '" aria-pressed="' + (S.dayMap[w] === i) + '">' + x.label + '</button>';
+      });
+      html += '</div></div>';
+    });
+    $('dayMap').innerHTML = html;
+  }
+  function afterMapChange() {
+    if (S.pickDay !== dayKey && (S.step === 0 || S.done)) S.setIdx = autoSet();
+    save(); renderDayMap(); renderSplash(); render();
+  }
+  $('dayMap').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    S.dayMap[+b.dataset.w] = +b.dataset.i;
+    afterMapChange();
+  });
+  $('dmReset').addEventListener('click', function () { S.dayMap = DAY_SET.slice(); afterMapChange(); });
+  renderDayMap();
+  function renderSplash() {
+    var auto = autoSet(), chosen = todayChoice();
+    $('today').textContent = WEEK[new Date().getDay()] + '요일 · 오늘 바칠 신비' + (chosen === auto ? ' (자동)' : ' (직접 선택)');
+    var pb = $('pick').children;
+    for (var i = 0; i < pb.length; i++) {
+      pb[i].setAttribute('aria-pressed', i === chosen ? 'true' : 'false');
+      pb[i].querySelector('small').textContent = i === auto ? '오늘 자동' : daysOf(i);
+    }
+    var r = $('resumeBtn');
+    if (S.step > 0 && !S.done) {
+      var s = steps[S.step];
+      var where = s.phase === 'decade' ? (s.d + 1) + '단' : (s.phase === 'intro' ? '시작 기도' : '마침 기도');
+      r.hidden = false;
+      r.textContent = '이어서 기도하기 · ' + SETS[S.setIdx].name + ' ' + where;
+      $('startBtn').textContent = '처음부터 시작하기';
+    } else {
+      r.hidden = true;
+      $('startBtn').textContent = '기도 시작하기';
+    }
+  }
+
+  function render() {
+    var set = SETS[S.setIdx];
+    var step = Math.min(Math.max(S.step | 0, 0), TOTAL - 1);
+    var s = steps[step];
+    var done = S.done;
+    var VT = TOTAL, VI = step;
+
+    var tb = $('tabs').children;
+    for (var i = 0; i < tb.length; i++) tb[i].setAttribute('aria-pressed', i === S.setIdx ? 'true' : 'false');
+    var sz = $('sizes').children;
+    for (var z = 0; z < sz.length; z++) sz[z].setAttribute('aria-pressed', z === S.fontIdx ? 'true' : 'false');
+    document.querySelectorAll('.sw').forEach(function (b) { b.setAttribute('aria-checked', S[b.dataset.key] ? 'true' : 'false'); });
+
+    $('setName').textContent = set.name + ' · ' + daysOf(S.setIdx);
+    var phase = '시작 기도';
+    if (s.phase === 'decade' || s.k === 'med') phase = (s.d + 1) + '단 · ' + set.short[s.d];
+    if (s.phase === 'end') phase = '마침 기도';
+    if (done) phase = '기도를 마쳤습니다';
+    $('phase').textContent = phase;
+    var pct = Math.round((done ? 1 : VI / VT) * 100);
+    $('progBar').style.width = pct + '%';
+    $('ptext').textContent = (done ? VT : VI + 1) + ' / ' + VT + ' · ' + pct + '%';
+    $('chip').textContent = done ? '완료' : s.hint;
+
+    /* ring */
+    var allDone = done || s.phase === 'end';
+    var loopDone = allDone || !!s.loopDone;
+    var cur = done ? -1 : s.bead;
+    function isDone(o) { if (o === cur) return false; if (allDone) return true; if (loopDone && o >= 6) return true; return o < cur; }
+    for (var o = 1; o <= 60; o++) {
+      var el = beadEls[o];
+      var size = +el.dataset.size;
+      var c = o === cur;
+      if (c) size += 4;
+      var w = size, h = o === 6 ? size + 2 : size;
+      el.style.width = w + 'px'; el.style.height = h + 'px';
+      el.style.left = (el.dataset.cx - w / 2) + 'px'; el.style.top = (el.dataset.cy - h / 2) + 'px';
+      el.className = 'bead' + (c ? ' cur' : (isDone(o) ? ' done' : ''));
+    }
+    var cr = $('cross');
+    cr.setAttribute('class', cur === 0 ? 'cur' : (isDone(0) ? 'done' : ''));
+    $('ring').setAttribute('aria-label', '묵주 진행 위치: ' + (done ? '완료' : s.hint));
+
+    /* dots */
+    var dots = '';
+    if (s.of && !done) {
+      for (var k = 1; k <= s.of; k++) {
+        var filled = s.after ? true : (s.k === 'hail' && k < s.n);
+        var isCur = s.k === 'hail' && k === s.n;
+        dots += '<span class="' + (isCur ? 'cur' : (filled ? 'done' : '')) + '"></span>';
+      }
+    }
+    $('dots').innerHTML = dots;
+
+    /* prayer */
+    var title = P[s.k] ? P[s.k].title : '';
+    var text = P[s.k] ? P[s.k].text : '';
+    if (s.k === 'med') { title = (s.d + 1) + '단 묵상'; text = set.full[s.d]; }
+    $('ptitle').textContent = title;
+    $('ptxt').textContent = text;
+    $('ptxt').style.fontSize = SIZES[S.fontIdx][1] + 'px';
+    $('count').textContent = s.k === 'hail' ? s.n + ' / ' + s.of : '';
+    var hide = !!S.hideText && !done;
+    $('card').style.display = done || hide ? 'none' : 'flex';
+    $('beadView').style.display = hide ? 'flex' : 'none';
+    if (hide) renderBeads(s, set);
+    $('donecard').style.display = done ? 'flex' : 'none';
+    $('doneSet').textContent = set.name;
+    $('foot').style.display = done ? 'none' : 'flex';
+    $('prevBtn').disabled = step === 0;
+    $('nextBtn').textContent = step === TOTAL - 1 ? '마치기' : (s.k === 'hail' && s.n < s.of ? '다음 성모송' : '다음');
+  }
+
+  function go(to) {
+    S.step = to; save(); render();
+    if (to > 0) mark('step');
+    $('card').scrollTop = 0;
+  }
+  function doNext() {
+    if (S.done) return;
+    if (S.hideText && steps[S.step] && steps[S.step].k === 'hail') { S.hidHails = (S.hidHails || 0) + 1; save(); if (S.hidHails <= 10) setTimeout(checkMidUnlocks, 450); }
+    if (S.step >= TOTAL - 1) { S.done = true; save(); mark('done'); checkNewRewards(); render(); keepScreen(false); vibrate([40, 80, 40, 80, 120]); return; }
+    var nx = S.step + 1;
+    feedback(nx);
+    go(nx);
+    advanceFx();
+  }
+  function doPrev() {
+    if (S.step <= 0 || S.done) return;
+    var pv = S.step - 1;
+    go(pv);
+  }
+  $('nextBtn').addEventListener('click', doNext);
+  $('prevBtn').addEventListener('click', doPrev);
+
+
+  /* ---------- rosary skins & advance effects ---------- */
+  var SKINS = {
+    gold:  { name: '금빛', v: { 'up-mini': 'rgba(255,255,255,.22)', up: '#E9E1CC', 'up-big': '#E9D6A1', done: '#D8B45C', thread: 'rgba(216,180,92,.35)', cur: '#FFFFFF', glow: '242,210,122', cross: '#E9D6A1', sheen: 'none' } },
+    pearl: { name: '진주', v: { 'up-mini': 'rgba(255,255,255,.2)', up: 'rgba(240,236,228,.45)', 'up-big': 'rgba(240,236,228,.62)', done: '#F1ECE2', thread: 'rgba(200,208,222,.55)', cur: '#FFFFFF', glow: '190,214,255', cross: '#C9D0DC', sheen: 'radial-gradient(circle at 34% 30%, rgba(255,255,255,.95) 0 16%, rgba(255,255,255,0) 46%)' } },
+    wood:  { name: '원목', v: { 'up-mini': 'rgba(186,130,84,.38)', up: 'rgba(168,112,63,.55)', 'up-big': 'rgba(140,90,52,.75)', done: '#A8703F', thread: 'rgba(196,150,100,.5)', cur: '#F6D7A8', glow: '255,190,110', cross: '#9A6A40', sheen: 'radial-gradient(circle at 34% 30%, rgba(255,226,180,.5) 0 18%, rgba(255,226,180,0) 55%)' } },
+    rose:  { name: '장미', v: { 'up-mini': 'rgba(224,106,122,.32)', up: 'rgba(224,106,122,.45)', 'up-big': 'rgba(192,57,75,.6)', done: '#D2566A', thread: 'rgba(230,140,155,.5)', cur: '#FFE6EA', glow: '255,150,170', cross: '#E59AA6', sheen: 'radial-gradient(circle at 34% 30%, rgba(255,255,255,.55) 0 14%, rgba(255,255,255,0) 44%)' } },
+    lapis: { name: '청금석', v: { 'up-mini': 'rgba(120,160,235,.3)', up: 'rgba(96,136,224,.45)', 'up-big': 'rgba(70,110,210,.6)', done: '#3F6FD8', thread: 'rgba(216,180,92,.55)', cur: '#DDE8FF', glow: '150,190,255', cross: '#D8B45C', sheen: 'radial-gradient(circle at 34% 30%, rgba(255,255,255,.5) 0 12%, rgba(255,255,255,0) 40%)' } }
+  };
+  var SKIN_ORDER = ['gold', 'pearl', 'wood', 'rose', 'lapis'];
+  var EFFECTS = [['none', '효과 없음'], ['soft', '은은한 빛'], ['ripple', '빛 물결'], ['sparkle', '반짝임'], ['rays', '후광']];
+  if (!SKINS[S.skin] || !skinOpen(S.skin, unlocked())) S.skin = 'gold';
+  if (!S.fx || !fxOpen(S.fx, unlocked())) S.fx = 'soft';
+
+  function applySkin() {
+    var root = document.querySelector('.app'), v = SKINS[S.skin].v;
+    for (var k in v) root.style.setProperty('--b-' + k, v[k]);
+  }
+  function playFx(el, type, big) {
+    if (!el || !type || type === 'none') return;
+    var html = '', i;
+    if (type === 'soft') html = '<span class="fx-glow"></span>';
+    if (type === 'ripple') for (i = 0; i < 3; i++) html += '<span class="fx-ring" style="animation-delay:' + (i * 0.16) + 's"></span>';
+    if (type === 'sparkle') for (i = 0; i < 12; i++) html += '<span class="fx-spark" style="--a:' + (i * 30 + (i % 2) * 12) + 'deg;--d:' + (i % 2 ? 46 : 62) + 'px;animation-delay:' + ((i % 3) * 0.04) + 's"></span>';
+    if (type === 'rays') for (i = 0; i < 12; i++) html += '<span class="fx-ray" style="--a:' + (i * 30) + 'deg"></span>';
+    el.classList.toggle('big', !!big);
+    el.innerHTML = '';
+    void el.offsetWidth;
+    el.innerHTML = html;
+    clearTimeout(el._t);
+    el._t = setTimeout(function () { el.innerHTML = ''; }, 1600);
+  }
+  function popMiniBead() {
+    if (S.fx === 'none') return;
+    var c = document.querySelector('.ring .bead.cur');
+    if (!c) return;
+    c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+  }
+  function advanceFx() {
+    var big = steps[S.step] && steps[S.step].k === 'med';
+    popMiniBead();
+    if (S.hideText && !S.done) setTimeout(function () { playFx($('fx'), S.fx, big); }, 140);
+  }
+  var LOCK_SM = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  function renderSkinUI() {
+    var u = unlocked(), html = '';
+    SKIN_ORDER.forEach(function (id) {
+      var v = SKINS[id].v, on = S.skin === id, open = skinOpen(id, u);
+      var bead = function (bg, cls, extra) { return '<i' + (cls ? ' class="' + cls + '"' : '') + ' style="background-color:' + bg + ';background-image:' + v.sheen + (extra || '') + '"></i>'; };
+      html += '<button type="button" class="skin' + (open ? '' : ' locked') + '" data-skin="' + id + '" aria-pressed="' + on + '" aria-label="' + SKINS[id].name + (open ? '' : ' (잠김)') + '"><span class="sw5">' +
+        bead(v.done) + bead(v.done) + bead(v.cur, 'c', ';box-shadow:0 0 0 2px rgb(' + v.glow + '),0 0 8px rgba(' + v.glow + ',.8)') + bead(v.up) + bead(v.up) +
+        (open ? '' : '<span class="lk">' + LOCK_SM + '</span>') + '</span><span class="cap">' + SKINS[id].name + '</span></button>';
+    });
+    $('skinGrid').innerHTML = html;
+    var fh = '';
+    EFFECTS.forEach(function (e) {
+      var open = fxOpen(e[0], u);
+      fh += '<button type="button" class="' + (open ? '' : 'locked') + '" data-fx="' + e[0] + '" aria-pressed="' + (S.fx === e[0]) + '" aria-label="' + e[1] + (open ? '' : ' (잠김)') + '">' + (open ? '' : LOCK_SM + ' ') + e[1] + '</button>';
+    });
+    $('fxGrid').innerHTML = fh;
+  }
+  function lockHint(el, kind, id) {
+    var r = rewardFor(kind, id);
+    el.textContent = r ? '도전과제 ‘' + r.name + '’' + (josa(r.name, '을', '를').slice(-1)) + ' 달성하면 열려요 · ' + r.desc : '';
+  }
+  $('skinGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (!skinOpen(b.dataset.skin, unlocked())) { lockHint($('skinHint'), 'skin', b.dataset.skin); return; }
+    $('skinHint').textContent = '';
+    S.skin = b.dataset.skin; save(); applySkin(); renderSkinUI();
+    playFx($('fxPrev'), S.fx === 'none' ? 'soft' : S.fx, false);
+  });
+  $('fxGrid').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (!fxOpen(b.dataset.fx, unlocked())) { lockHint($('fxHint'), 'fx', b.dataset.fx); return; }
+    $('fxHint').textContent = '';
+    S.fx = b.dataset.fx; save(); renderSkinUI();
+    playFx($('fxPrev'), S.fx, false);
+  });
+  applySkin();
+  renderSkinUI();
+
+  /* ---------- bead wheel (prayer text hidden) ---------- */
+  var BV_R = 520, BV_STEP = 5.4;
+  var PATH = [0, 1, 2, 3, 4, 5, 6];
+  for (var q = 7; q <= 60; q++) PATH.push(q);
+  PATH.push(6, 0);
+  steps.forEach(function (st) {
+    if (st.phase === 'end' || st.loopDone) st.pi = st.bead === 0 ? PATH.length - 1 : PATH.length - 2;
+    else st.pi = PATH.indexOf(st.bead);
+  });
+  var CROSS_SVG = '<svg viewBox="0 0 16 20" aria-hidden="true"><path d="M6 0 H10 V5 H16 V9 H10 V20 H6 V9 H0 V5 H6 Z" fill="currentColor"/></svg>';
+  var bvEls = [];
+  (function () {
+    var html = '<div class="bv-thread"></div>';
+    PATH.forEach(function (b, i) {
+      var kind = b === 0 ? 'x' : (b === 6 ? 'm' : ((b === 1 || b === 5 || (b >= 7 && (b - 7) % 11 === 10)) ? 'b' : 's'));
+      html += '<div class="bvb ' + kind + '" style="transform:rotate(' + (i * BV_STEP).toFixed(2) + 'deg) translateY(-' + BV_R + 'px)"><i>' + (kind === 'x' ? CROSS_SVG : '') + '</i></div>';
+    });
+    $('wheel').innerHTML = html;
+    bvEls = Array.prototype.slice.call($('wheel').querySelectorAll('.bvb'));
+  })();
+  function renderBeads(s, set) {
+    var pi = s.pi;
+    $('wheel').style.transform = 'rotate(' + (-pi * BV_STEP).toFixed(2) + 'deg)';
+    bvEls.forEach(function (el, i) {
+      el.classList.toggle('cur', i === pi);
+      el.classList.toggle('done', i < pi);
+    });
+    var phase = '시작 기도';
+    if (s.phase === 'decade' || s.k === 'med') phase = set.name + ' ' + (s.d + 1) + '단';
+    if (s.phase === 'end') phase = '마침 기도';
+    $('bvPhase').textContent = phase;
+    $('bvTitle').textContent = s.k === 'med' ? (s.d + 1) + '단 묵상' : (P[s.k] ? P[s.k].title : '');
+    $('bvCount').textContent = s.k === 'hail' ? s.n + ' / ' + s.of : '';
+    $('bvCount').style.display = s.k === 'hail' ? 'block' : 'none';
+    $('bvMed').textContent = s.k === 'med' ? set.full[s.d] : (s.phase === 'decade' ? set.short[s.d] : s.hint);
+  }
+  (function () {
+    var sx = null, sy = 0;
+    var bv = $('beadView');
+    bv.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('button')) { sx = null; return; }
+      sx = e.clientX; sy = e.clientY;
+    });
+    bv.addEventListener('pointerup', function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      sx = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { if (dx < 0) doNext(); else doPrev(); }
+      else if (Math.abs(dx) < 12 && Math.abs(dy) < 12) doNext();
+    });
+    bv.addEventListener('pointercancel', function () { sx = null; });
+  })();
+  $('hideText').addEventListener('click', function () { S.hideText = true; save(); render(); });
+  $('showText').addEventListener('click', function () { S.hideText = false; save(); render(); });
+  $('restartBtn').addEventListener('click', function () { $('newReward').style.display = 'none'; S.done = false; go(0); keepScreen(S.keepOn); });
+  $('startBtn').addEventListener('click', function () { S.done = false; S.step = 0; S.setIdx = todayChoice(); save(); render(); show('pray'); });
+  $('resumeBtn').addEventListener('click', function () { render(); show('pray'); });
+  $('backBtn').addEventListener('click', function () { show('splash'); });
+  $('setBtn').addEventListener('click', openSettings);
+  $('splashSet').addEventListener('click', openSettings);
+  $('closeSet').addEventListener('click', closeSettings);
+  $('scrim').addEventListener('click', function (e) { if (e.target === $('scrim')) closeSettings(); });
+  document.querySelectorAll('.sw').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.dataset.key; S[k] = !S[k]; save(); render();
+      if (k === 'keepOn') keepScreen(S.keepOn && $('pray').classList.contains('on') && !S.done);
+      if (k === 'vib' && S.vib) vibrate([15]);
+    });
+  });
+
+  /* Android back button: return true when handled */
+  window.appBack = function () {
+    if ($('scrim').classList.contains('on')) { closeSettings(); return true; }
+    if ($('privacy').classList.contains('on')) { show(pvReturn); return true; }
+    if ($('pray').classList.contains('on') || $('history').classList.contains('on') || $('profile').classList.contains('on') || $('guide').classList.contains('on')) { show('splash'); return true; }
+    return false;
+  };
+
+  render();
+  renderSplash();
+  renderProfileButton();
+  screenBars();
+})();
+</script>
+</body>
+</html>

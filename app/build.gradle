@@ -1,0 +1,46 @@
+plugins {
+    id 'com.android.application'
+}
+
+def runNumber = (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+def versionOffset = (project.findProperty('VERSION_OFFSET') ?: '0').toString().toInteger()
+def appVersionCode = runNumber + versionOffset
+def keystoreFile = System.getenv('KEYSTORE_FILE')
+
+android {
+    namespace 'com.rosary.prayer'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId project.findProperty('APP_ID') ?: 'com.rosary.prayer'
+        minSdk 26
+        targetSdk 36
+        versionCode appVersionCode
+        versionName "1.0.${appVersionCode}"
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreFile) {
+                storeFile file(keystoreFile)
+                storePassword System.getenv('KEYSTORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keystoreFile) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
