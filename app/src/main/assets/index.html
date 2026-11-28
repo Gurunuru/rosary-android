@@ -63,7 +63,7 @@ button{font-family:inherit;cursor:pointer}
 .card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .card h2{margin:0;font-size:22px;font-weight:700;color:var(--navy)}
 .count{font-size:15px;font-weight:700;color:#7A5E22;white-space:nowrap}
-.ptxt{margin:0;line-height:1.85;white-space:pre-line;color:var(--ink);-webkit-user-select:text;user-select:text}
+.ptxt{margin:0;line-height:1.85;white-space:pre-line;word-break:keep-all;overflow-wrap:break-word;color:var(--ink);-webkit-user-select:text;user-select:text}
 .donecard{flex:1;background:#fff;border:1px solid #E4DCC8;border-radius:20px;padding:32px 24px;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
 .donecard h2{margin:0;font-size:24px;color:var(--navy)}
 .donecard p{margin:0;font-size:15px;line-height:1.7;color:var(--brown)}
@@ -520,7 +520,7 @@ input.fin{height:44px;padding:0 12px}
     hail: { title: '성모송', text: '은총이 가득하신 마리아님, 기뻐하소서!\n주님께서 함께 계시니\n여인 중에 복되시며\n태중의 아들 예수님 또한 복되시나이다.\n천주의 성모 마리아님,\n이제와 저희 죽을 때에\n저희 죄인을 위하여 빌어주소서. 아멘.' },
     glory: { title: '영광송', text: '영광이 성부와 성자와 성령께\n처음과 같이 이제와 항상 영원히. 아멘.' },
     fatima: { title: '구원의 기도', text: '예수님,\n저희 죄를 용서하시며\n저희를 지옥 불에서 구하시고\n연옥 영혼을 돌보시며\n가장 버림받은 영혼들을 돌보소서.' },
-    salve: { title: '성모 찬송', text: '[성모 찬송 기도문 — 가톨릭 기도서 원문으로 넣어 주세요]' }
+    salve: { title: '성모 찬송', text: '○ 모후이시며 사랑이 넘친 어머니,\n우리의 생명, 기쁨, 희망이시여,\n● 당신 우러러 하와의 그 자손들이\n눈물을 흘리며 부르짖나이다.\n슬픔의 골짜기에서,\n○ 우리들의 보호자 성모님,\n불쌍한 저희를\n인자로운 눈으로 굽어보소서.\n● 귀양살이 끝날 때에\n당신의 아들 우리 주 예수님 뵙게 하소서.\n너그러우시고, 자애로우시며\n오! 아름다우신 동정 마리아님.\n○ 천주의 성모님, 저희를 위하여 빌어주시어\n● 그리스도께서 약속하신 영원한 생명을 얻게 하소서.\n\n† 기도합시다.\n하느님, 외아드님이\n삶과 죽음과 부활로써\n저희에게 영원한 구원을 마련해 주셨나이다.\n복되신 동정 마리아와 함께 이 신비를 묵상하며\n묵주기도를 바치오니\n저희가 그 가르침을 따라\n영원한 생명을 얻게 하소서.\n우리 주 그리스도를 통하여 비나이다.\n◎ 아멘.' }
   };
   var SETS = [
     { label: '환희', name: '환희의 신비', days: '월·토', short: ['예수님 잉태', '엘리사벳 방문', '예수님 탄생', '성전에 바치심', '성전에서 찾으심'],
